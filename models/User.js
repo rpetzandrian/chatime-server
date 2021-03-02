@@ -16,7 +16,24 @@ const UserModel = {
       });
     });
   },
-  getUserById: () => {},
+
+  getUserById: (request) => {
+    return new Promise((resolve, reject) => {
+      let id = request;
+      const query = `SELECT id, name, username, phone, bio, photo FROM users WHERE id = ${request}`;
+
+      db.query(query, (err, response) => {
+        if (!err) {
+          resolve(response.rows);
+        } else {
+          reject({
+            message: `Error occurs during get user with id ${request}`,
+            statusCode: 500,
+          });
+        }
+      });
+    });
+  },
   addNewUser: (request) => {
     return new Promise((resolve, reject) => {
       let {

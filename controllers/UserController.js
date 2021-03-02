@@ -18,6 +18,22 @@ const UserController = {
     }
   },
 
+  getUserById: async (req, res) => {
+    try {
+      const result = await userModel.getUserById(req.params.id);
+      res.status(200).send({
+        message: `Success get user with id ${req.params.id}`,
+        statusCode: 200,
+        data: result,
+      });
+    } catch (err) {
+      res.status(500).send({
+        message: err.message,
+        statusCode: 500,
+      });
+    }
+  },
+
   addNewUser: async (req, res) => {
     if (req.body.email !== undefined && req.body.password !== undefined) {
       try {
