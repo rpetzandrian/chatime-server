@@ -114,6 +114,22 @@ const UserModel = {
     });
   },
 
+  searchUsersByName: (request) => {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM public.users WHERE LOWER(name) LIKE '%${request.toLowerCase()}%' ORDER BY name ASC `;
+      db.query(query, (err, response) => {
+        if (!err) {
+          resolve(response.rows);
+        } else {
+          reject({
+            message: "Error occurs when searching users",
+            statusCode: 500,
+          });
+        }
+      });
+    });
+  },
+
   deleteUser: (request) => {
     return new Promise((resolve, reject) => {
       const query = `DELETE FROM users where id=${request}`;

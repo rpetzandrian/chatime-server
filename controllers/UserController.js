@@ -71,6 +71,22 @@ const UserController = {
     }
   },
 
+  searchUsersByName: async (req, res) => {
+    try {
+      const result = await userModel.searchUsersByName(req.query.name);
+      res.status(200).send({
+        message: "Search user success",
+        statusCode: 200,
+        data: result,
+      });
+    } catch (err) {
+      res.status(err.statusCode).send({
+        message: err.message,
+        statusCode: err.statusCode,
+      });
+    }
+  },
+
   deleteUser: async (req, res) => {
     try {
       const result = await userModel.deleteUser(req.params.id);
