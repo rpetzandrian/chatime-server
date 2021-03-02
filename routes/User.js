@@ -5,4 +5,6 @@ router.get("/", UserController.getAllUsers);
 
 router.post("/", UserController.addNewUser);
 
+router.delete("/:id", UserController.deleteUser);
+
 module.exports = router;

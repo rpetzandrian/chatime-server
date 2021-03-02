@@ -3,7 +3,7 @@ const db = require("../helpers/connection_db");
 const UserModel = {
   getAllUsers: () => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT name, username, phone, bio, photo FROM users`;
+      const query = `SELECT id, name, username, phone, bio, photo FROM users ORDER BY name ASC`;
       db.query(query, (err, response) => {
         if (!err) {
           resolve(response.rows);
@@ -58,7 +58,25 @@ const UserModel = {
     });
   },
   updateUser: () => {},
-  deleteUser: () => {},
+  deleteUser: (request) => {
+    return new Promise((resolve, reject) => {
+      const query = `DELETE FROM users where id=${request}`;
+
+      db.query(query, (err) => {
+        if (!err) {
+          resolve({
+            message: `Successfull! User with id ${request} has been deleted`,
+            statusCode: 200,
+          });
+        } else {
+          reject({
+            message: "Error occurs when deleting user",
+            statusCode: 500,
+          });
+        }
+      });
+    });
+  },
 };
 
 module.exports = UserModel;
