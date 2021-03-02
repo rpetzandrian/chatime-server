@@ -4,7 +4,7 @@ const db = require("../helpers/connection_db");
 const UserModel = {
   getAllUsers: () => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT id, name, username, phone, bio, photo FROM users ORDER BY name ASC`;
+      const query = `SELECT id, name, username, email, phone, photo, bio FROM users ORDER BY name ASC`;
       db.query(query, (err, response) => {
         if (!err) {
           resolve(response.rows);
@@ -21,7 +21,7 @@ const UserModel = {
   getUserById: (request) => {
     return new Promise((resolve, reject) => {
       let id = request;
-      const query = `SELECT id, name, username, phone, bio, photo FROM users WHERE id = ${request}`;
+      const query = `SELECT id, name, username, email, phone, photo, bio FROM users WHERE id = ${request}`;
 
       db.query(query, (err, response) => {
         if (!err) {
@@ -116,7 +116,7 @@ const UserModel = {
 
   searchUsersByName: (request) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM public.users WHERE LOWER(name) LIKE '%${request.toLowerCase()}%' ORDER BY name ASC `;
+      const query = `SELECT id, name, username, email, phone, photo, bio FROM public.users WHERE LOWER(name) LIKE '%${request.toLowerCase()}%' ORDER BY name ASC `;
       db.query(query, (err, response) => {
         if (!err) {
           resolve(response.rows);
