@@ -1,3 +1,4 @@
+const { request } = require("express");
 const db = require("../helpers/connection_db");
 
 const UserModel = {
@@ -34,6 +35,7 @@ const UserModel = {
       });
     });
   },
+
   addNewUser: (request) => {
     return new Promise((resolve, reject) => {
       let {
@@ -74,7 +76,44 @@ const UserModel = {
       });
     });
   },
-  updateUser: () => {},
+
+  updateUser: (id, request) => {
+    return new Promise((resolve, reject) => {
+      db.query(`SELECT * FROM users WHERE id = ${id}`).then((initialValue) => {
+        if (initialValue.rows.length < 1) {
+          reject({
+            message: "User not found",
+            statusCode: 400,
+          });
+          return;
+        }
+        let {
+          name = initialValue.rows[0]?.name,
+          username = initialValue.rows[0]?.username,
+          email = initialValue.rows[0]?.email,
+          password = initialValue.rows[0]?.password,
+          phone = initialValue.rows[0]?.phone,
+          photo = initialValue.rows[0]?.photo,
+          bio = initialValue.rows[0]?.bio,
+        } = request;
+        const query = `UPDATE users SET name='${name}', username='${username}', email='${email}', password='${password}', phone='${phone}', photo='${photo}', bio='${bio}', updated_at='now()' WHERE id = '${id}'`;
+        db.query(query, (err) => {
+          if (!err) {
+            resolve({
+              message: "Success update user",
+              statusCode: 200,
+            });
+          } else {
+            reject({
+              message: "Error occurrs when update user",
+              statusCode: 500,
+            });
+          }
+        });
+      });
+    });
+  },
+
   deleteUser: (request) => {
     return new Promise((resolve, reject) => {
       const query = `DELETE FROM users where id=${request}`;

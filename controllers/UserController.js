@@ -56,6 +56,21 @@ const UserController = {
     }
   },
 
+  updateUser: async (req, res) => {
+    try {
+      const result = await userModel.updateUser(req.params.id, req.body);
+      res.status(200).send({
+        message: result.message,
+        statusCode: result.statusCode,
+      });
+    } catch (err) {
+      res.status(500).send({
+        message: err.message,
+        statusCode: err.statusCode,
+      });
+    }
+  },
+
   deleteUser: async (req, res) => {
     try {
       const result = await userModel.deleteUser(req.params.id);
