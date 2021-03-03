@@ -4,32 +4,18 @@ const UserController = {
   getAllUsers: async (req, res) => {
     try {
       const result = await userModel.getAllUsers();
-      res.status(200).send({
-        message: "Success get all users",
-        statusCode: 200,
-        data: result,
-      });
+      res.status(result.statusCode).send(result);
     } catch (err) {
-      res.status(500).send({
-        message: err.message,
-        statusCode: 500,
-      });
+      res.status(err.statusCode).send(err);
     }
   },
 
   getUserById: async (req, res) => {
     try {
       const result = await userModel.getUserById(req.params.id);
-      res.status(200).send({
-        message: `Success get user with id ${req.params.id}`,
-        statusCode: 200,
-        data: result,
-      });
+      res.status(result.statusCode).send(result);
     } catch (err) {
-      res.status(500).send({
-        message: err.message,
-        statusCode: 500,
-      });
+      res.status(err.statusCode).send(err);
     }
   },
 
@@ -37,67 +23,39 @@ const UserController = {
     if (req.body.email !== undefined && req.body.password !== undefined) {
       try {
         const result = await userModel.addNewUser(req.body);
-        res.status(result.statusCode).send({
-          message: result.message,
-          statusCode: result.statusCode,
-        });
+        res.status(result.statusCode).send(result);
       } catch (err) {
-        res.status(err.statusCode).send({
-          message: err.message,
-          statusCode: err.statusCode,
-        });
+        res.status(err.statusCode).send(err);
       }
     } else {
-      res.status(400).send({
-        message: "Email or password is empty",
-        statusCode: 400,
-      });
+      res.status(err.statusCode).send(err);
     }
   },
 
   updateUser: async (req, res) => {
     try {
       const result = await userModel.updateUser(req.params.id, req.body);
-      res.status(200).send({
-        message: result.message,
-        statusCode: result.statusCode,
-      });
+      res.status(result.statusCode).send(result);
     } catch (err) {
-      res.status(500).send({
-        message: err.message,
-        statusCode: err.statusCode,
-      });
+      res.status(err.statusCode).send(err);
     }
   },
 
   searchUsersByName: async (req, res) => {
     try {
       const result = await userModel.searchUsersByName(req.query.name);
-      res.status(200).send({
-        message: "Search user success",
-        statusCode: 200,
-        data: result,
-      });
+      res.status(result.statusCode).send(result);
     } catch (err) {
-      res.status(err.statusCode).send({
-        message: err.message,
-        statusCode: err.statusCode,
-      });
+      res.status(err.statusCode).send(err);
     }
   },
 
   deleteUser: async (req, res) => {
     try {
       const result = await userModel.deleteUser(req.params.id);
-      res.status(result.statusCode).send({
-        message: result.message,
-        statusCode: result.statusCode,
-      });
+      res.status(result.statusCode).send(result);
     } catch (err) {
-      res.status(err.statusCode).send({
-        message: err.message,
-        statusCode: err.statusCode,
-      });
+      res.status(err.statusCode).send(err);
     }
   },
 };

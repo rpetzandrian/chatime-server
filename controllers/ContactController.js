@@ -4,16 +4,9 @@ const ContactController = {
   getAllContacts: async (req, res) => {
     try {
       const result = await contactModel.getAllContacts(req.params.id);
-      res.status(200).send({
-        message: "Success get all contacts",
-        statusCode: 200,
-        data: result,
-      });
+      res.status(result.statusCode).send(result);
     } catch (err) {
-      res.status(err.statusCode).send({
-        message: err.message,
-        statusCode: err.statusCode,
-      });
+      res.status(err.statusCode).send(err);
     }
   },
 
@@ -24,16 +17,9 @@ const ContactController = {
         name: req.query.name,
       };
       const result = await contactModel.searchContactsByName(request);
-      res.status(200).send({
-        message: "Success get contacts",
-        statusCode: 200,
-        data: result,
-      });
+      res.status(result.statusCode).send(result);
     } catch (err) {
-      res.status(err.statusCode).send({
-        message: err.message,
-        statusCode: err.statusCode,
-      });
+      res.status(err.statusCode).send(err);
     }
   },
 
@@ -45,15 +31,9 @@ const ContactController = {
         friend_name: req.body.friend_name,
       };
       const result = await contactModel.addNewContact(request);
-      res.status(200).send({
-        message: result.message,
-        statusCode: result.statusCode,
-      });
+      res.status(result.statusCode).send(result);
     } catch (err) {
-      res.status(err.statusCode).send({
-        message: err.message,
-        statusCode: err.statusCode,
-      });
+      res.status(err.statusCode).send(err);
     }
   },
 
@@ -65,15 +45,9 @@ const ContactController = {
         friendName: req.body.friend_name,
       };
       const result = await contactModel.updateContact(request);
-      res.status(200).send({
-        message: result.message,
-        statusCode: result.statusCode,
-      });
+      res.status(result.statusCode).send(result);
     } catch (err) {
-      res.status(err.statusCode).send({
-        message: err.message,
-        statusCode: err.statusCode,
-      });
+      res.status(err.statusCode).send(err);
     }
   },
 
@@ -84,15 +58,9 @@ const ContactController = {
         friendID: req.params.friend_id,
       };
       const result = await contactModel.deleteContact(request);
-      res.status(200).send({
-        message: "Delete contact success",
-        statusCode: 200,
-      });
+      res.status(result.statusCode).send(result);
     } catch (err) {
-      res.status(err.statusCode).send({
-        message: err.message,
-        statusCode: err.statusCode,
-      });
+      res.status(err.statusCode).send(err);
     }
   },
 };

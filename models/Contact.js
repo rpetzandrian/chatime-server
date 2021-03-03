@@ -1,5 +1,6 @@
 const { request } = require("express");
 const db = require("../helpers/connection_db");
+const responseMessage = require("../helpers/responseMessage");
 
 const ContactModel = {
   getAllContacts: (request) => {
@@ -15,12 +16,11 @@ const ContactModel = {
               friend_name: contact.rows[0]?.friend_name,
               friends: response.rows,
             };
-            resolve(result);
+            resolve(
+              responseMessage("Success when get all contacts", 200, result)
+            );
           } else {
-            reject({
-              message: "Error occurs when get contact",
-              statusCode: 500,
-            });
+            reject(responseMessage("Error occurs when get contact", 500, []));
           }
         });
       });
@@ -40,12 +40,13 @@ const ContactModel = {
               friend_name: contact.rows[0]?.friend_name,
               friends: response.rows,
             };
-            resolve(result);
+            resolve(
+              responseMessage("Success when search contact", 200, result)
+            );
           } else {
-            reject({
-              message: "Error occurs when get contact",
-              statusCode: 500,
-            });
+            reject(
+              responseMessage("Error occurs when search contact", 500, [])
+            );
           }
         });
       });
@@ -57,19 +58,12 @@ const ContactModel = {
       let { user_id, friend_id, friend_name = null } = request;
       const query = `INSERT into contacts(user_id, friend_id, friend_name) VALUES($1, $2, $3)`;
       const values = [user_id, friend_id, friend_name];
-      console.log(values);
 
       db.query(query, values, (err) => {
         if (!err) {
-          resolve({
-            message: "Success add contact",
-            statusCode: 201,
-          });
+          resolve(responseMessage("Success add new contact", 201, []));
         } else {
-          reject({
-            message: "Add contact failed",
-            statusCode: 500,
-          });
+          reject(responseMessage("Add contact failed", 500, []));
         }
       });
     });
@@ -80,10 +74,7 @@ const ContactModel = {
       const query = `SELECT * FROM contacts WHERE user_id = ${request.userID} AND friend_id=${request.friendID}`;
       db.query(query, (err, initialValue) => {
         if (initialValue.rows.length < 1) {
-          reject({
-            message: "contact not found",
-            statusCode: 400,
-          });
+          reject(responseMessage("contact not found", 400, []));
           return;
         }
         let {
@@ -94,15 +85,9 @@ const ContactModel = {
         const query = `UPDATE contacts SET friend_name = '${friendName}' WHERE user_id = ${userID} AND friend_id= ${friendID}`;
         db.query(query, (err) => {
           if (!err) {
-            resolve({
-              message: `Contact updated`,
-              statusCode: 200,
-            });
+            resolve(responseMessage("Contact updated", 200, []));
           } else {
-            reject({
-              message: "Update contact failed",
-              statusCode: 500,
-            });
+            reject(responseMessage("Update contact failed", 500, []));
           }
         });
       });
@@ -114,15 +99,9 @@ const ContactModel = {
       const query = `DELETE FROM contacts WHERE user_id = ${request.userID} AND friend_id = ${request.friendID}`;
       db.query(query, (err) => {
         if (!err) {
-          resolve({
-            message: "Delete contact success",
-            statusCode: 200,
-          });
+          resolve(responseMessage("Delete contact success", 200, []));
         } else {
-          reject({
-            message: "Delete contact failed",
-            statusCode: 500,
-          });
+          reject(responseMessage("Delete contact failed", 500, []));
         }
       });
     });
