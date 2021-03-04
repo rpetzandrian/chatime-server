@@ -21,7 +21,8 @@ const UserController = {
   },
 
   addNewUser: async (req, res) => {
-    if (req.body.email !== undefined && req.body.password !== undefined) {
+    const { email, password } = req.body;
+    if (email !== undefined && password !== undefined) {
       try {
         const result = await userModel.addNewUser(req.body);
         res.status(result.statusCode).send(result);

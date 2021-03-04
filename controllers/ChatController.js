@@ -12,11 +12,12 @@ const ChatController = {
   },
 
   addNewChatroom: async (req, res) => {
-    if (req.body.user1 !== undefined && req.body.user2 !== undefined) {
+    const { user1, user2 } = req.body;
+    if (user1 !== undefined && user2 !== undefined && user1 !== user2) {
       try {
         const request = {
-          user1: parseInt(req.body.user1),
-          user2: parseInt(req.body.user2),
+          user1: parseInt(user1),
+          user2: parseInt(user2),
         };
         const result = await chatModel.addNewChatroom(request);
         res.status(result.statusCode).send(result);
@@ -64,7 +65,8 @@ const ChatController = {
     if (
       chatroom_id !== undefined &&
       sender_id !== undefined &&
-      receiver_id !== undefined
+      receiver_id !== undefined &&
+      sender_id !== receiver_id
     ) {
       try {
         const result = await chatModel.addNewMessage(req.body);

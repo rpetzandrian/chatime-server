@@ -82,12 +82,12 @@ const ContactModel = {
   searchContactsByName: (request) => {
     return new Promise((resolve, reject) => {
       const query = `SELECT contact_id, user_id FROM contacts WHERE user_id = ${request.id}`;
-      db.query(query, (error, contact) => {
+      db.query(query, (error, contactResult) => {
         if (error) {
           reject(responseMessage("Error when search users", 500, []));
         }
 
-        if (contact.rows.length < 1) {
+        if (contactResult.rows.length < 1) {
           reject(responseMessage("Contact not found", 400, []));
           return;
         }
@@ -101,9 +101,9 @@ const ContactModel = {
 
           if (!err) {
             const result = {
-              contact_id: contact.rows[0]?.contact_id,
-              user_id: contact.rows[0]?.user_id,
-              friend_name: contact.rows[0]?.friend_name,
+              contact_id: contactResult.rows[0]?.contact_id,
+              user_id: contactResult.rows[0]?.user_id,
+              friend_name: contactResult.rows[0]?.friend_name,
               friends: response.rows,
             };
             resolve(

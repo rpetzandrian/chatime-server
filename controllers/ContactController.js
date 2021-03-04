@@ -12,11 +12,12 @@ const ContactController = {
   },
 
   getContactByFriendId: async (req, res) => {
-    const request = {
-      user_id: req.params.id,
-      friend_id: req.params.friend_id,
-    };
+    const { id, friend_id } = req.params;
     try {
+      const request = {
+        user_id: id,
+        friend_id: friend_id,
+      };
       const result = await contactModel.getContactByFriendId(request);
       res.status(result.statusCode).send(result);
     } catch (err) {
@@ -25,10 +26,12 @@ const ContactController = {
   },
 
   searchContactsByName: async (req, res) => {
+    const { id } = req.params;
+    const { name } = req.query;
     try {
       const request = {
-        id: req.params.id,
-        name: req.query.name,
+        id: id,
+        name: name,
       };
       const result = await contactModel.searchContactsByName(request);
       res.status(result.statusCode).send(result);
@@ -38,12 +41,14 @@ const ContactController = {
   },
 
   addNewContact: async (req, res) => {
-    if (req.params.id !== undefined && req.body.friend_id !== undefined) {
+    const { id } = req.params;
+    const { friend_id, friend_name } = req.body;
+    if (id !== undefined && friend_id !== undefined) {
       try {
         const request = {
-          user_id: parseInt(req.params.id),
-          friend_id: parseInt(req.body.friend_id),
-          friend_name: req.body.friend_name,
+          user_id: parseInt(id),
+          friend_id: parseInt(friend_id),
+          friend_name: friend_name,
         };
         const result = await contactModel.addNewContact(request);
         res.status(result.statusCode).send(result);
@@ -56,11 +61,13 @@ const ContactController = {
   },
 
   updateContact: async (req, res) => {
+    const { id, friend_id } = req.params;
+    const { friend_name } = req.body;
     try {
       const request = {
-        userID: parseInt(req.params.id),
-        friendID: parseInt(req.params.friend_id),
-        friendName: req.body.friend_name,
+        userID: parseInt(id),
+        friendID: parseInt(friend_id),
+        friendName: friend_name,
       };
       const result = await contactModel.updateContact(request);
       res.status(result.statusCode).send(result);
@@ -70,10 +77,11 @@ const ContactController = {
   },
 
   deleteContact: async (req, res) => {
+    const { id, friend_id } = req.params;
     try {
       const request = {
-        userID: req.params.id,
-        friendID: req.params.friend_id,
+        userID: id,
+        friendID: friend_id,
       };
       const result = await contactModel.deleteContact(request);
       res.status(result.statusCode).send(result);
