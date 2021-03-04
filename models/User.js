@@ -107,7 +107,7 @@ const UserModel = {
       db.query(query, (err, response) => {
         if (!err) {
           resolve(
-            responseMessage("Success when create data", 200, response.rows)
+            responseMessage("Success get users by name", 200, response.rows)
           );
         } else {
           reject(responseMessage("Error occurs when searching users", 500, []));
