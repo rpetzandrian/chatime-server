@@ -6,6 +6,10 @@ const UserModel = {
     return new Promise((resolve, reject) => {
       const query = `SELECT id, name, username, email, phone, photo, bio FROM users ORDER BY name ASC`;
       db.query(query, (err, response) => {
+        if (response.rows.length < 1) {
+          reject(responseMessage("User not found", 400, []));
+          return;
+        }
         if (!err) {
           resolve(responseMessage("Success get Users", 200, response.rows));
         } else {
@@ -21,6 +25,10 @@ const UserModel = {
       const query = `SELECT id, name, username, email, phone, photo, bio FROM users WHERE id = ${request}`;
 
       db.query(query, (err, response) => {
+        if (response.rows.length < 1) {
+          reject(responseMessage("User not found", 400, []));
+          return;
+        }
         if (!err) {
           resolve(
             responseMessage(
@@ -105,6 +113,10 @@ const UserModel = {
     return new Promise((resolve, reject) => {
       const query = `SELECT id, name, username, email, phone, photo, bio FROM users WHERE LOWER(name) LIKE '%${request.toLowerCase()}%' ORDER BY name ASC `;
       db.query(query, (err, response) => {
+        if (response.rows.length < 1) {
+          reject(responseMessage("User not found", 400, []));
+          return;
+        }
         if (!err) {
           resolve(
             responseMessage("Success get users by name", 200, response.rows)

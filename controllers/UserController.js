@@ -1,4 +1,5 @@
 const userModel = require("../models/User");
+const emptyInputMessage = require("../helpers/emptyInputMessage");
 
 const UserController = {
   getAllUsers: async (req, res) => {
@@ -28,7 +29,7 @@ const UserController = {
         res.status(err.statusCode).send(err);
       }
     } else {
-      res.status(err.statusCode).send(err);
+      emptyInputMessage(res);
     }
   },
 

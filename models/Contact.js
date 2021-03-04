@@ -7,8 +7,22 @@ const ContactModel = {
     return new Promise((resolve, reject) => {
       const query = `SELECT contact_id, user_id FROM contacts WHERE user_id = ${request}`;
       db.query(query, (error, contact) => {
+        if (error) {
+          reject(responseMessage("Error occurs when get contact", 500, []));
+        }
+
+        if (contact.rows.length < 1) {
+          reject(responseMessage("Contact not found", 400, []));
+          return;
+        }
+
         const query = `SELECT contacts.friend_id, contacts.friend_name, username, email, phone, photo, bio FROM contacts INNER JOIN users ON contacts.friend_id = users.id WHERE contacts.user_id = ${request}`;
         db.query(query, (err, response) => {
+          if (response.rows.length < 1) {
+            reject(responseMessage("Contact not found", 400, []));
+            return;
+          }
+
           if (!err) {
             const result = {
               contact_id: contact.rows[0]?.contact_id,
@@ -31,8 +45,22 @@ const ContactModel = {
     return new Promise((resolve, reject) => {
       const query = `SELECT contact_id, user_id FROM contacts WHERE user_id = ${request.id}`;
       db.query(query, (error, contact) => {
+        if (error) {
+          reject(responseMessage("Error when search users", 500, []));
+        }
+
+        if (contact.rows.length < 1) {
+          reject(responseMessage("Contact not found", 400, []));
+          return;
+        }
+
         const query = `SELECT contacts.friend_id, contacts.friend_name, username, email, phone, photo, bio FROM contacts INNER JOIN users ON contacts.friend_id = users.id WHERE LOWER(contacts.friend_name) LIKE '%${request.name.toLowerCase()}%' ORDER BY contacts.friend_name ASC`;
         db.query(query, (err, response) => {
+          if (response.rows.length < 1) {
+            reject(responseMessage("Contact not found", 400, []));
+            return;
+          }
+
           if (!err) {
             const result = {
               contact_id: contact.rows[0]?.contact_id,
@@ -74,7 +102,7 @@ const ContactModel = {
       const query = `SELECT * FROM contacts WHERE user_id = ${request.userID} AND friend_id=${request.friendID}`;
       db.query(query, (err, initialValue) => {
         if (initialValue.rows.length < 1) {
-          reject(responseMessage("contact not found", 400, []));
+          reject(responseMessage("Contact not found", 400, []));
           return;
         }
         let {

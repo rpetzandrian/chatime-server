@@ -1,4 +1,5 @@
 const chatModel = require("../models/Chat");
+const emptyInputMessage = require("../helpers/emptyInputMessage");
 
 const ChatController = {
   getChatrooms: async (req, res) => {
@@ -11,15 +12,19 @@ const ChatController = {
   },
 
   addNewChatroom: async (req, res) => {
-    try {
-      const request = {
-        user1: parseInt(req.body.user1),
-        user2: parseInt(req.body.user2),
-      };
-      const result = await chatModel.addNewChatroom(request);
-      res.status(result.statusCode).send(result);
-    } catch (err) {
-      res.status(err.statusCode).send(err);
+    if (req.body.user1 !== undefined && req.body.user2 !== undefined) {
+      try {
+        const request = {
+          user1: parseInt(req.body.user1),
+          user2: parseInt(req.body.user2),
+        };
+        const result = await chatModel.addNewChatroom(request);
+        res.status(result.statusCode).send(result);
+      } catch (err) {
+        res.status(err.statusCode).send(err);
+      }
+    } else {
+      emptyInputMessage(res);
     }
   },
 
@@ -55,11 +60,20 @@ const ChatController = {
   },
 
   addNewMessage: async (req, res) => {
-    try {
-      const result = await chatModel.addNewMessage(req.body);
-      res.status(result.statusCode).send(result);
-    } catch (err) {
-      res.status(err.statusCode).send(err);
+    const { chatroom_id, sender_id, receiver_id } = req.body;
+    if (
+      chatroom_id !== undefined &&
+      sender_id !== undefined &&
+      receiver_id !== undefined
+    ) {
+      try {
+        const result = await chatModel.addNewMessage(req.body);
+        res.status(result.statusCode).send(result);
+      } catch (err) {
+        res.status(err.statusCode).send(err);
+      }
+    } else {
+      emptyInputMessage(res);
     }
   },
 

@@ -1,4 +1,5 @@
 const contactModel = require("../models/Contact");
+const emptyInputMessage = require("../helpers/emptyInputMessage");
 
 const ContactController = {
   getAllContacts: async (req, res) => {
@@ -10,7 +11,7 @@ const ContactController = {
     }
   },
 
-  searcContactsByName: async (req, res) => {
+  searchContactsByName: async (req, res) => {
     try {
       const request = {
         id: req.params.id,
@@ -24,16 +25,20 @@ const ContactController = {
   },
 
   addNewContact: async (req, res) => {
-    try {
-      const request = {
-        user_id: parseInt(req.params.id),
-        friend_id: parseInt(req.body.friend_id),
-        friend_name: req.body.friend_name,
-      };
-      const result = await contactModel.addNewContact(request);
-      res.status(result.statusCode).send(result);
-    } catch (err) {
-      res.status(err.statusCode).send(err);
+    if (req.params.id !== undefined && req.body.friend_id !== undefined) {
+      try {
+        const request = {
+          user_id: parseInt(req.params.id),
+          friend_id: parseInt(req.body.friend_id),
+          friend_name: req.body.friend_name,
+        };
+        const result = await contactModel.addNewContact(request);
+        res.status(result.statusCode).send(result);
+      } catch (err) {
+        res.status(err.statusCode).send(err);
+      }
+    } else {
+      emptyInputMessage(res);
     }
   },
 

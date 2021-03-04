@@ -7,6 +7,11 @@ const ChatModel = {
     return new Promise((resolve, reject) => {
       const query = `SELECT * FROM chatrooms WHERE user1_id = ${request} OR user2_id = ${request}`;
       db.query(query, (err, response) => {
+        if (response.rows.length < 1) {
+          reject(responseMessage("Chatroom not found", 400, []));
+          return;
+        }
+
         if (!err) {
           resolve(
             responseMessage("Success get chatroom list", 200, response.rows)
@@ -56,6 +61,11 @@ const ChatModel = {
     return new Promise((resolve, reject) => {
       const query = `SELECT * FROM messages WHERE chatroom_id = ${request} ORDER BY timestamp ASC`;
       db.query(query, (err, response) => {
+        if (response.rows.length < 1) {
+          reject(responseMessage("Contact not found", 400, []));
+          return;
+        }
+
         if (!err) {
           resolve(responseMessage("Success get messages", 200, response.rows));
         } else {
@@ -69,6 +79,11 @@ const ChatModel = {
     return new Promise((resolve, reject) => {
       const query = `SELECT * FROM messages WHERE chatroom_id = ${request} ORDER BY timestamp DESC`;
       db.query(query, (err, response) => {
+        if (response.rows.length < 1) {
+          reject(responseMessage("Contact not found", 400, []));
+          return;
+        }
+
         if (!err) {
           resolve(
             responseMessage("Success get messages", 200, response.rows[0])
