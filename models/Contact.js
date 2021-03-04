@@ -41,6 +41,44 @@ const ContactModel = {
     });
   },
 
+  getContactByFriendId: (request) => {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT contact_id, user_id FROM contacts WHERE user_id = ${request.user_id} AND friend_id = ${request.friend_id}`;
+      db.query(query, (error, contact) => {
+        if (error) {
+          reject(responseMessage("Error occurs when get contact", 500, []));
+        }
+
+        if (contact.rows.length < 1) {
+          reject(responseMessage("Contact not found", 400, []));
+          return;
+        }
+
+        const query = `SELECT contacts.friend_id, contacts.friend_name, username, email, phone, photo, bio FROM contacts INNER JOIN users ON contacts.friend_id = users.id WHERE contacts.user_id = ${request.user_id} AND friend_id = ${request.friend_id}`;
+        db.query(query, (err, response) => {
+          if (response.rows.length < 1) {
+            reject(responseMessage("Contact not found", 400, []));
+            return;
+          }
+
+          if (!err) {
+            const result = {
+              contact_id: contact.rows[0]?.contact_id,
+              user_id: contact.rows[0]?.user_id,
+              friend_name: contact.rows[0]?.friend_name,
+              friends: response.rows,
+            };
+            resolve(
+              responseMessage("Success when get all contacts", 200, result)
+            );
+          } else {
+            reject(responseMessage("Error occurs when get contact", 500, []));
+          }
+        });
+      });
+    });
+  },
+
   searchContactsByName: (request) => {
     return new Promise((resolve, reject) => {
       const query = `SELECT contact_id, user_id FROM contacts WHERE user_id = ${request.id}`;

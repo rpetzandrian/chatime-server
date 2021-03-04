@@ -3,6 +3,8 @@ const contactController = require("../controllers/ContactController");
 
 router.get("/:id", contactController.getAllContacts);
 
+router.get("/:id/:friend_id", contactController.getContactByFriendId);
+
 router.get("/search/:id", contactController.searchContactsByName);
 
 router.post("/:id", contactController.addNewContact);

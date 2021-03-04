@@ -11,6 +11,19 @@ const ContactController = {
     }
   },
 
+  getContactByFriendId: async (req, res) => {
+    const request = {
+      user_id: req.params.id,
+      friend_id: req.params.friend_id,
+    };
+    try {
+      const result = await contactModel.getContactByFriendId(request);
+      res.status(result.statusCode).send(result);
+    } catch (err) {
+      res.status(err.statusCode).send(err);
+    }
+  },
+
   searchContactsByName: async (req, res) => {
     try {
       const request = {
