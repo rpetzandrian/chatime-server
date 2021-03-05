@@ -35,8 +35,12 @@ const UserController = {
   },
 
   updateUser: async (req, res) => {
+    const request = {
+      id: req.params.id,
+      body: req.body,
+    };
     try {
-      const result = await userModel.updateUser(req.params.id, req.body);
+      const result = await userModel.updateUser(request);
       res.status(result.statusCode).send(result);
     } catch (err) {
       res.status(err.statusCode).send(err);

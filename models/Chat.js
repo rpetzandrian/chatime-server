@@ -1,4 +1,3 @@
-const { request } = require("express");
 const db = require("../helpers/connection_db");
 const responseMessage = require("../helpers/responseMessage");
 

@@ -5,7 +5,7 @@ router.get("/:id", contactController.getAllContacts);
 
 router.get("/:id/:friend_id", contactController.getContactByFriendId);
 
-router.get("/search/:id", contactController.searchContactsByName);
+router.get("/:id/search", contactController.searchContactsByName);
 
 router.post("/:id", contactController.addNewContact);
 
