@@ -1,25 +1,25 @@
-const { request } = require("express");
 const db = require("../helpers/connection_db");
+const queryContact = require("../helpers/queryContact");
 const responseMessage = require("../helpers/responseMessage");
 
 const ContactModel = {
   getAllContacts: (request) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT contact_id, user_id FROM contacts WHERE user_id = ${request}`;
+      const query = queryContact.getAll(request).q1;
       db.query(query, (error, contact) => {
         if (error) {
-          reject(responseMessage("Error occurs when get contact", 500, []));
+          reject(responseMessage("Error occurs when get contact", 500, {}));
         }
 
         if (contact.rows.length < 1) {
-          reject(responseMessage("Contact not found", 400, []));
+          reject(responseMessage("Contact not found", 400, {}));
           return;
         }
 
-        const query = `SELECT contacts.friend_id, contacts.friend_name, username, email, phone, photo, bio FROM contacts INNER JOIN users ON contacts.friend_id = users.id WHERE contacts.user_id = ${request}`;
+        const query = queryContact.getAll(request).q2;
         db.query(query, (err, response) => {
           if (response.rows.length < 1) {
-            reject(responseMessage("Contact not found", 400, []));
+            reject(responseMessage("Contact not found", 400, {}));
             return;
           }
 
@@ -28,13 +28,13 @@ const ContactModel = {
               contact_id: contact.rows[0]?.contact_id,
               user_id: contact.rows[0]?.user_id,
               friend_name: contact.rows[0]?.friend_name,
-              friends: response.rows,
+              friend_list: response.rows,
             };
             resolve(
               responseMessage("Success when get all contacts", 200, result)
             );
           } else {
-            reject(responseMessage("Error occurs when get contact", 500, []));
+            reject(responseMessage("Error occurs when get contact", 500, {}));
           }
         });
       });
@@ -43,21 +43,21 @@ const ContactModel = {
 
   getContactByFriendId: (request) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT contact_id, user_id FROM contacts WHERE user_id = ${request.user_id} AND friend_id = ${request.friend_id}`;
+      const query = queryContact.getByFriend(request).q1;
       db.query(query, (error, contact) => {
         if (error) {
-          reject(responseMessage("Error occurs when get contact", 500, []));
+          reject(responseMessage("Error occurs when get contact", 500, {}));
         }
 
         if (contact.rows.length < 1) {
-          reject(responseMessage("Contact not found", 400, []));
+          reject(responseMessage("Contact not found", 400, {}));
           return;
         }
 
-        const query = `SELECT contacts.friend_id, contacts.friend_name, username, email, phone, photo, bio FROM contacts INNER JOIN users ON contacts.friend_id = users.id WHERE contacts.user_id = ${request.user_id} AND friend_id = ${request.friend_id}`;
+        const query = queryContact.getByFriend(request).q2;
         db.query(query, (err, response) => {
           if (response.rows.length < 1) {
-            reject(responseMessage("Contact not found", 400, []));
+            reject(responseMessage("Contact not found", 400, {}));
             return;
           }
 
@@ -66,13 +66,13 @@ const ContactModel = {
               contact_id: contact.rows[0]?.contact_id,
               user_id: contact.rows[0]?.user_id,
               friend_name: contact.rows[0]?.friend_name,
-              friends: response.rows,
+              friend_detail: response.rows[0],
             };
             resolve(
               responseMessage("Success when get all contacts", 200, result)
             );
           } else {
-            reject(responseMessage("Error occurs when get contact", 500, []));
+            reject(responseMessage("Error occurs when get contact", 500, {}));
           }
         });
       });
@@ -81,21 +81,21 @@ const ContactModel = {
 
   searchContactsByName: (request) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT contact_id, user_id FROM contacts WHERE user_id = ${request.id}`;
+      const query = queryContact.getAll(request.id).q1;
       db.query(query, (error, contactResult) => {
         if (error) {
-          reject(responseMessage("Error when search users", 500, []));
+          reject(responseMessage("Error when search users", 500, {}));
         }
 
         if (contactResult.rows.length < 1) {
-          reject(responseMessage("Contact not found", 400, []));
+          reject(responseMessage("Contact not found", 400, {}));
           return;
         }
 
-        const query = `SELECT contacts.friend_id, contacts.friend_name, username, email, phone, photo, bio FROM contacts INNER JOIN users ON contacts.friend_id = users.id WHERE LOWER(contacts.friend_name) LIKE '%${request.name.toLowerCase()}%' ORDER BY contacts.friend_name ASC`;
+        const query = queryContact.search(request);
         db.query(query, (err, response) => {
           if (response.rows.length < 1) {
-            reject(responseMessage("Contact not found", 400, []));
+            reject(responseMessage("Contact not found", 400, {}));
             return;
           }
 
@@ -111,7 +111,7 @@ const ContactModel = {
             );
           } else {
             reject(
-              responseMessage("Error occurs when search contact", 500, [])
+              responseMessage("Error occurs when search contact", 500, {})
             );
           }
         });
@@ -121,15 +121,13 @@ const ContactModel = {
 
   addNewContact: (request) => {
     return new Promise((resolve, reject) => {
-      let { user_id, friend_id, friend_name = null } = request;
-      const query = `INSERT into contacts(user_id, friend_id, friend_name) VALUES($1, $2, $3)`;
-      const values = [user_id, friend_id, friend_name];
+      const { query, values } = queryContact.addNew(request);
 
       db.query(query, values, (err) => {
         if (!err) {
-          resolve(responseMessage("Success add new contact", 201, []));
+          resolve(responseMessage("Success add new contact", 201, request));
         } else {
-          reject(responseMessage("Add contact failed", 500, []));
+          reject(responseMessage("Add contact failed", 500, {}));
         }
       });
     });
@@ -137,23 +135,18 @@ const ContactModel = {
 
   updateContact: (request) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM contacts WHERE user_id = ${request.userID} AND friend_id=${request.friendID}`;
+      const query = queryContact.update(request, null).q1;
       db.query(query, (err, initialValue) => {
         if (initialValue.rows.length < 1) {
-          reject(responseMessage("Contact not found", 400, []));
+          reject(responseMessage("Contact not found", 400, {}));
           return;
         }
-        let {
-          friendName = initialValue.rows[0].friend_name || null,
-          userID,
-          friendID,
-        } = request;
-        const query = `UPDATE contacts SET friend_name = '${friendName}' WHERE user_id = ${userID} AND friend_id= ${friendID}`;
+        const query = queryContact.update(request, initialValue).q2;
         db.query(query, (err) => {
           if (!err) {
-            resolve(responseMessage("Contact updated", 200, []));
+            resolve(responseMessage("Contact updated", 200, request));
           } else {
-            reject(responseMessage("Update contact failed", 500, []));
+            reject(responseMessage("Update contact failed", 500, {}));
           }
         });
       });
@@ -162,12 +155,12 @@ const ContactModel = {
 
   deleteContact: (request) => {
     return new Promise((resolve, reject) => {
-      const query = `DELETE FROM contacts WHERE user_id = ${request.userID} AND friend_id = ${request.friendID}`;
+      const query = queryContact.delete(request);
       db.query(query, (err) => {
         if (!err) {
-          resolve(responseMessage("Delete contact success", 200, []));
+          resolve(responseMessage("Delete contact success", 200, {}));
         } else {
-          reject(responseMessage("Delete contact failed", 500, []));
+          reject(responseMessage("Delete contact failed", 500, {}));
         }
       });
     });
