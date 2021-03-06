@@ -1,13 +1,14 @@
 const db = require("../helpers/connection_db");
 const responseMessage = require("../helpers/responseMessage");
+const queryChat = require("../helpers/queryChat");
 
 const ChatModel = {
   getChatrooms: (request) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM chatrooms WHERE user1_id = ${request} OR user2_id = ${request}`;
+      const query = queryChat.getChatroom(request);
       db.query(query, (err, response) => {
         if (response.rows.length < 1) {
-          reject(responseMessage("Chatroom not found", 400, []));
+          reject(responseMessage("Chatroom not found", 400, {}));
           return;
         }
 
@@ -16,7 +17,7 @@ const ChatModel = {
             responseMessage("Success get chatroom list", 200, response.rows)
           );
         } else {
-          reject(responseMessage("Error occurs when get chatroom", 500, []));
+          reject(responseMessage("Error occurs when get chatroom", 500, {}));
         }
       });
     });
@@ -24,13 +25,13 @@ const ChatModel = {
 
   addNewChatroom: (request) => {
     return new Promise((resolve, reject) => {
-      const query = `INSERT into chatrooms(user1_id, user2_id, created_at) VALUES(${request.user1}, ${request.user2}, 'now()')`;
+      const query = queryChat.addNewChatroom(request);
       db.query(query, (err) => {
         if (!err) {
-          resolve(responseMessage("Success add new chatroom", 201, []));
+          resolve(responseMessage("Success add new chatroom", 201, request));
         } else {
           reject(
-            responseMessage("Error occurs when add new chatroom", 500, [])
+            responseMessage("Error occurs when add new chatroom", 500, {})
           );
         }
       });
@@ -39,17 +40,17 @@ const ChatModel = {
 
   deleteChatroom: (request) => {
     return new Promise((resolve, reject) => {
-      const query = `DELETE FROM messages WHERE chatroom_id = ${request}`;
+      const query = queryChat.deleteChatroom(request).q1;
       db.query(query, (err) => {
         if (err) {
-          reject(responseMessage("Error when delete messages", 500, []));
+          reject(responseMessage("Error when delete messages", 500, {}));
         }
-        const query = `DELETE FROM chatrooms WHERE id = ${request}`;
+        const query = queryChat.deleteChatroom(request).q2;
         db.query(query, (err) => {
           if (!err) {
-            resolve(responseMessage("Success delete chatroom", 200, []));
+            resolve(responseMessage("Success delete chatroom", 200, {}));
           } else {
-            reject(responseMessage("Delete chatroom failed", 500, []));
+            reject(responseMessage("Delete chatroom failed", 500, {}));
           }
         });
       });
@@ -58,17 +59,17 @@ const ChatModel = {
 
   getMessageByChatroom: (request) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM messages WHERE chatroom_id = ${request} ORDER BY timestamp ASC`;
+      const query = queryChat.getMessage(request);
       db.query(query, (err, response) => {
         if (response.rows.length < 1) {
-          reject(responseMessage("Contact not found", 400, []));
+          reject(responseMessage("Contact not found", 400, {}));
           return;
         }
 
         if (!err) {
           resolve(responseMessage("Success get messages", 200, response.rows));
         } else {
-          reject(responseMessage("Error occurs when get messages", 500, []));
+          reject(responseMessage("Error occurs when get messages", 500, {}));
         }
       });
     });
@@ -76,7 +77,7 @@ const ChatModel = {
 
   getLastMessageByChatroom: (request) => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM messages WHERE chatroom_id = ${request} ORDER BY timestamp DESC`;
+      const query = queryChat.getLastMessage(request);
       db.query(query, (err, response) => {
         if (response.rows.length < 1) {
           reject(responseMessage("Contact not found", 400, []));
@@ -88,7 +89,7 @@ const ChatModel = {
             responseMessage("Success get messages", 200, response.rows[0])
           );
         } else {
-          reject(responseMessage("Error occurs when get messages", 500, []));
+          reject(responseMessage("Error occurs when get messages", 500, {}));
         }
       });
     });
@@ -96,37 +97,12 @@ const ChatModel = {
 
   addNewMessage: (request) => {
     return new Promise((resolve, reject) => {
-      let {
-        chatroom_id,
-        sender_id,
-        receiver_id,
-        message_text = null,
-        longitude = null,
-        latitude = null,
-        image = null,
-        file = null,
-        document = null,
-      } = request;
-      const query = `INSERT into messages(chatroom_id, sender_id, receiver_id, is_read, message_text, longitude, latitude, image, file, document, created_at, timestamp) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`;
-      const values = [
-        chatroom_id,
-        sender_id,
-        receiver_id,
-        false,
-        message_text,
-        longitude,
-        latitude,
-        image,
-        file,
-        document,
-        `now()`,
-        `now()`,
-      ];
+      const { query, values } = queryChat.addNewMessage(request);
       db.query(query, values, (err) => {
         if (!err) {
-          resolve(responseMessage("Success add message", 201, []));
+          resolve(responseMessage("Success add message", 201, request));
         } else {
-          reject(responseMessage("Error while add message", 500, []));
+          reject(responseMessage("Error while add message", 500, {}));
         }
       });
     });
@@ -134,12 +110,12 @@ const ChatModel = {
 
   deleteMessage: (request) => {
     return new Promise((resolve, reject) => {
-      const query = `DELETE FROM messages WHERE id = ${request}`;
+      const query = queryChat.deleteMessage(request);
       db.query(query, (err) => {
         if (!err) {
-          resolve(responseMessage("Success delete message", 200, []));
+          resolve(responseMessage("Success delete message", 200, {}));
         } else {
-          reject(responseMessage("Error occurs when delete message", 500, []));
+          reject(responseMessage("Error occurs when delete message", 500, {}));
         }
       });
     });
