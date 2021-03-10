@@ -66,13 +66,25 @@ const UserAuth = {
                       username: username ?? name,
                       role: is_admin ? "Admin" : "User",
                     };
-                    jwt.sign(payload, "chatime123", function (errToken, token) {
-                      if (!errToken) {
-                        resolve(responseMessage("Login success", 200, token));
-                      } else {
-                        reject(responseMessage("Error occurs when login", 500));
+                    jwt.sign(
+                      payload,
+                      process.env.SECRET_KEY,
+                      function (errToken, token) {
+                        if (!errToken) {
+                          resolve(
+                            responseMessage(
+                              "Login success",
+                              200,
+                              "Bearer " + token
+                            )
+                          );
+                        } else {
+                          reject(
+                            responseMessage("Error occurs when login", 500)
+                          );
+                        }
                       }
-                    });
+                    );
                   } else {
                     reject(responseMessage("Wrong email/password", 400));
                   }

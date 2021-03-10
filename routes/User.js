@@ -3,13 +3,18 @@ const userController = require("../controllers/UserController");
 const fileUpload = require("../helpers/fileUpload");
 const verify = require("../helpers/jwt");
 
-router.get("/", userController.getAllUsers);
+router.get("/", verify.isAdminVerify, userController.getAllUsers);
 
 router.get("/search", userController.searchUsersByName);
 
 router.get("/:id", userController.getUserById);
 
-router.post("/", fileUpload.uploadPhoto, userController.addNewUser);
+router.post(
+  "/",
+  verify.isAdminVerify,
+  fileUpload.uploadPhoto,
+  userController.addNewUser
+);
 
 router.patch("/:id", fileUpload.uploadPhoto, userController.updateUser);
 

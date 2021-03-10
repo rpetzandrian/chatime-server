@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const verify = {
-  verifyToken: (req, res, next) => {
+  verifyUser: (req, res, next) => {
     let bearerToken = req.header("user-token");
 
     if (!bearerToken) {
@@ -11,7 +11,7 @@ const verify = {
       });
     } else {
       const token = bearerToken.split(" ")[1];
-      jwt.verify(token, "chatime123", function (err, decoded) {
+      jwt.verify(token, process.env.SECRET_KEY, function (err, decoded) {
         if (!err) {
           if (decoded.role == "Admin") next();
           else if (decoded.role == "User") next();
@@ -46,7 +46,7 @@ const verify = {
       });
     } else {
       const token = bearerToken.split(" ")[1];
-      jwt.verify(token, "chatime123", function (err, decoded) {
+      jwt.verify(token, process.env.SECRET_KEY, function (err, decoded) {
         if (!err) {
           if (decoded.role == "Admin") next();
           else
