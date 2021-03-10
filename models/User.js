@@ -4,9 +4,9 @@ const queryUser = require("../helpers/queryUser");
 const errUserExist = require("../helpers/errUserExists");
 
 const UserModel = {
-  getAllUsers: () => {
+  getAllUsers: (request) => {
     return new Promise((resolve, reject) => {
-      const query = queryUser.getAll();
+      const query = queryUser.getAll(request);
       db.query(query, (err, response) => {
         if (response.rows.length < 1) {
           reject(responseMessage("User not found", 400, {}));

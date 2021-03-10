@@ -4,7 +4,7 @@ const emptyInputMessage = require("../helpers/emptyInputMessage");
 const UserController = {
   getAllUsers: async (req, res) => {
     try {
-      const result = await userModel.getAllUsers();
+      const result = await userModel.getAllUsers(req.query);
       res.status(result.statusCode).send(result);
     } catch (err) {
       res.status(err.statusCode).send(err);
@@ -49,7 +49,7 @@ const UserController = {
 
   searchUsersByName: async (req, res) => {
     try {
-      const result = await userModel.searchUsersByName(req.query.name);
+      const result = await userModel.searchUsersByName(req.query);
       res.status(result.statusCode).send(result);
     } catch (err) {
       res.status(err.statusCode).send(err);

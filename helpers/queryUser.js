@@ -1,6 +1,9 @@
 const queryUser = {
-  getAll: () => {
-    return `SELECT id, name, username, email, phone, photo, bio FROM users ORDER BY name ASC`;
+  getAll: (req) => {
+    const { limit = 10, page = 1 } = req;
+    return `SELECT id, name, username, email, phone, photo, bio FROM users ORDER BY name ASC LIMIT ${limit} OFFSET ${
+      (page - 1) * limit
+    }`;
   },
 
   getById: (request) => {
@@ -16,9 +19,10 @@ const queryUser = {
       phone = null,
       photo = null,
       bio = null,
+      is_admin = false,
     } = request;
 
-    const query = `INSERT INTO users(name, username, email, password, phone, photo, bio, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
+    const query = `INSERT INTO users(name, username, email, password, phone, photo, bio, created_at, updated_at, is_admin) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
     const values = [
       name,
       username,
@@ -29,6 +33,7 @@ const queryUser = {
       bio,
       `now()`,
       null,
+      is_admin,
     ];
 
     return { query, values };
@@ -48,7 +53,10 @@ const queryUser = {
   },
 
   searchByName: (request) => {
-    return `SELECT id, name, username, email, phone, photo, bio FROM users WHERE LOWER(name) LIKE '%${request.toLowerCase()}%' ORDER BY name ASC `;
+    const { name, limit = 0, page = 1 } = request;
+    return `SELECT id, name, username, email, phone, photo, bio FROM users WHERE LOWER(name) LIKE '%${name.toLowerCase()}%' ORDER BY name ASC LIMIT ${limit} OFFSET ${
+      (page - 1) * limit
+    }`;
   },
 
   delete: (request) => {
