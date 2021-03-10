@@ -2,7 +2,6 @@ const db = require("../helpers/connection_db");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const responseMessage = require("../helpers/responseMessage");
-const hashPassword = require("../helpers/hashPassword");
 const queryUser = require("../helpers/queryUser");
 
 const UserAuth = {
@@ -14,28 +13,20 @@ const UserAuth = {
         (err, value) => {
           if (!err) {
             if (value.rows.length < 1) {
-              bcrypt.genSalt(10, (errSalt, salt) => {
-                if (!errSalt) {
-                  bcrypt.hash(password, salt, (errHash, hash) => {
-                    if (!errHash) {
-                      const newUser = {
-                        ...req,
-                        password: hash,
-                        is_admin: false,
-                      };
-                      const { query, values } = queryUser.addNew(newUser);
+              bcrypt.hash(password, 10, function (errHash, hash) {
+                if (!errHash) {
+                  const newUser = {
+                    ...req,
+                    password: hash,
+                    is_admin: false,
+                  };
+                  const { query, values } = queryUser.addNew(newUser);
 
-                      db.query(query, values, (err) => {
-                        if (!err) {
-                          resolve(
-                            responseMessage("Register success", 201, newUser)
-                          );
-                        } else {
-                          reject(
-                            responseMessage("Error occurs when register", 500)
-                          );
-                        }
-                      });
+                  db.query(query, values, (err) => {
+                    if (!err) {
+                      resolve(
+                        responseMessage("Register success", 201, newUser)
+                      );
                     } else {
                       reject(
                         responseMessage("Error occurs when register", 500)
@@ -69,11 +60,11 @@ const UserAuth = {
               (errCompare, result) => {
                 if (!errCompare) {
                   if (result) {
-                    const { id, username, name, role } = value.rows[0];
+                    const { id, username, name, is_admin } = value.rows[0];
                     const payload = {
                       id: id,
                       username: username ?? name,
-                      role: role ?? "basic",
+                      role: is_admin ? "Admin" : "User",
                     };
                     jwt.sign(payload, "chatime123", function (errToken, token) {
                       if (!errToken) {
