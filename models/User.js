@@ -3,7 +3,7 @@ const responseMessage = require("../helpers/responseMessage");
 const queryUser = require("../helpers/queryUser");
 const errUserExist = require("../helpers/errUserExists");
 const bcrypt = require("bcrypt");
-const { password } = require("../helpers/connection_db");
+const fs = require("fs");
 
 const UserModel = {
   getAllUsers: (request) => {
@@ -52,6 +52,7 @@ const UserModel = {
         if (!errHash) {
           const newData = { ...request, password: hash };
           const { query, values } = queryUser.addNew(newData);
+          console.log(values);
           db.query(query, values, (err) => {
             if (!err) {
               resolve(
@@ -83,18 +84,49 @@ const UserModel = {
             reject(responseMessage("User not found", 400, {}));
             return;
           }
-          const query = queryUser.update(request, initialValue);
-          db.query(query, (err) => {
-            if (!err) {
-              resolve(
-                responseMessage("Success update user", 200, request.body)
-              );
-            } else {
-              reject(
-                responseMessage("Error occurrs when update user", 500, {})
-              );
-            }
-          });
+
+          if (request.password) {
+            bcrypt.hash(request.password, 10, (errHash, hash) => {
+              if (!errHash) {
+                const newRequest = { ...request, password: hash };
+                const query = queryUser.update(newRequest, initialValue);
+                db.query(query, (err) => {
+                  if (!err) {
+                    if (request.photo !== undefined) {
+                      fs.unlinkSync(`public/${initialValue.rows[0].photo}`);
+                    }
+                    resolve(
+                      responseMessage("Success update user", 200, request.body)
+                    );
+                  } else {
+                    reject(
+                      responseMessage("Error occurrs when update user", 500, {})
+                    );
+                  }
+                });
+              } else {
+                reject(
+                  responseMessage("Error occurrs when update user", 500, {})
+                );
+              }
+            });
+          } else {
+            const query = queryUser.update(request, initialValue);
+            db.query(query, (err) => {
+              if (!err) {
+                if (request.photo !== undefined) {
+                  fs.unlinkSync(`public/${initialValue.rows[0].photo}`);
+                }
+                resolve(
+                  responseMessage("Success update user", 200, request.body)
+                );
+              } else {
+                reject(
+                  responseMessage("Error occurrs when update user", 500, {})
+                );
+              }
+            });
+          }
         }
       );
     });

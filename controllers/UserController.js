@@ -1,5 +1,6 @@
 const userModel = require("../models/User");
 const emptyInputMessage = require("../helpers/emptyInputMessage");
+const { request } = require("express");
 
 const UserController = {
   getAllUsers: async (req, res) => {
@@ -21,9 +22,15 @@ const UserController = {
   },
 
   addNewUser: async (req, res) => {
-    const request = { ...req.body, photo: req.file?.filename ?? null };
-    const { email, password } = req.body;
-    if (email !== undefined && password !== undefined) {
+    const request = {
+      ...req.body,
+      photo:
+        req.file == undefined
+          ? undefined
+          : `uploads/images/${req.file.filename}`,
+    };
+    const { email, password, name } = req.body;
+    if (email !== undefined && password !== undefined && name !== undefined) {
       try {
         const result = await userModel.addNewUser(request);
         res.status(result.statusCode).send(result);
@@ -37,8 +44,12 @@ const UserController = {
 
   updateUser: async (req, res) => {
     const request = {
+      ...req.body,
       id: req.params.id,
-      body: req.body,
+      photo:
+        req.file == undefined
+          ? undefined
+          : `uploads/images/${req.file.filename}`,
     };
     try {
       const result = await userModel.updateUser(request);

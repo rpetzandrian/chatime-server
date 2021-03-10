@@ -29,7 +29,7 @@ const queryUser = {
       email,
       password,
       phone,
-      `uploads/images/${photo}`,
+      photo,
       bio,
       `now()`,
       null,
@@ -40,16 +40,19 @@ const queryUser = {
   },
 
   update: (request, initialValue) => {
-    let {
-      name = initialValue.rows[0]?.name,
-      username = initialValue.rows[0]?.username,
-      email = initialValue.rows[0]?.email,
-      password = initialValue.rows[0]?.password,
-      phone = initialValue.rows[0]?.phone,
-      photo = initialValue.rows[0]?.photo,
-      bio = initialValue.rows[0]?.bio,
+    const {
+      name = initialValue.rows[0].name,
+      username = initialValue.rows[0].username,
+      email = initialValue.rows[0].email,
+      password = initialValue.rows[0].password,
+      phone = initialValue.rows[0].phone,
+      photo = initialValue.rows[0].photo,
+      bio = initialValue.rows[0].bio,
     } = request;
-    return `UPDATE users SET name='${name}', username='${username}', email='${email}', password='${password}', phone='${phone}', photo='${photo}', bio='${bio}', updated_at='now()' WHERE id = '${request.id}'`;
+
+    const query = `UPDATE users SET name='${name}', username='${username}', email='${email}', password='${password}', phone='${phone}', photo='${photo}', bio='${bio}', updated_at='now()' WHERE id = '${request.id}'`;
+
+    return query;
   },
 
   searchByName: (request) => {
