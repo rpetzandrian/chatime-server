@@ -21,10 +21,11 @@ const UserController = {
   },
 
   addNewUser: async (req, res) => {
+    const request = { ...req.body, photo: req.file?.filename ?? null };
     const { email, password } = req.body;
     if (email !== undefined && password !== undefined) {
       try {
-        const result = await userModel.addNewUser(req.body);
+        const result = await userModel.addNewUser(request);
         res.status(result.statusCode).send(result);
       } catch (err) {
         res.status(err.statusCode).send(err);

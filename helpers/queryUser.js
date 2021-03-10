@@ -29,7 +29,7 @@ const queryUser = {
       email,
       password,
       phone,
-      photo,
+      `uploads/images/${photo}`,
       bio,
       `now()`,
       null,

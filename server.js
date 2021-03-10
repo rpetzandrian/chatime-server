@@ -22,7 +22,7 @@ const bodyParser = require("body-parser");
 // };
 
 // app.use(cors(corsOptions));
-
+app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 

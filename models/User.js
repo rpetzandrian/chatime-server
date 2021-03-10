@@ -2,6 +2,8 @@ const db = require("../helpers/connection_db");
 const responseMessage = require("../helpers/responseMessage");
 const queryUser = require("../helpers/queryUser");
 const errUserExist = require("../helpers/errUserExists");
+const bcrypt = require("bcrypt");
+const { password } = require("../helpers/connection_db");
 
 const UserModel = {
   getAllUsers: (request) => {
@@ -46,17 +48,28 @@ const UserModel = {
 
   addNewUser: (request) => {
     return new Promise((resolve, reject) => {
-      const { query, values } = queryUser.addNew(request);
-      db.query(query, values, (err) => {
-        if (!err) {
-          resolve(
-            responseMessage("Successfull! User has been created", 201, request)
-          );
+      bcrypt.hash(request.password, 10, (errHash, hash) => {
+        if (!errHash) {
+          const newData = { ...request, password: hash };
+          const { query, values } = queryUser.addNew(newData);
+          db.query(query, values, (err) => {
+            if (!err) {
+              resolve(
+                responseMessage(
+                  "Successfull! User has been created",
+                  201,
+                  request
+                )
+              );
+            } else {
+              reject(
+                errUserExist(err, request) ||
+                  responseMessage("Error while create new user", 500, {})
+              );
+            }
+          });
         } else {
-          reject(
-            errUserExist(err, request) ||
-              responseMessage("Error while create new user", 500, {})
-          );
+          reject(responseMessage("Error while create new user", 500));
         }
       });
     });
