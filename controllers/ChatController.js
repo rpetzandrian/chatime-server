@@ -3,8 +3,9 @@ const emptyInputMessage = require("../helpers/emptyInputMessage");
 
 const ChatController = {
   getChatrooms: async (req, res) => {
+    const request = { ...req.query, id: req.params.id };
     try {
-      const result = await chatModel.getChatrooms(req.params.id);
+      const result = await chatModel.getChatrooms(request);
       res.status(result.statusCode).send(result);
     } catch (err) {
       res.status(err.statusCode).send(err);
@@ -39,10 +40,9 @@ const ChatController = {
   },
 
   getMessageByChatroom: async (req, res) => {
+    const request = { ...req.query, chatroom_id: req.params.chatroom_id };
     try {
-      const result = await chatModel.getMessageByChatroom(
-        req.params.chatroom_id
-      );
+      const result = await chatModel.getMessageByChatroom(request);
       res.status(result.statusCode).send(result);
     } catch (err) {
       res.status(err.statusCode).send(err);

@@ -81,7 +81,7 @@ const ContactModel = {
 
   searchContactsByName: (request) => {
     return new Promise((resolve, reject) => {
-      const query = queryContact.getAll(request.id).q1;
+      const query = queryContact.getAll(request).q1;
       db.query(query, (error, contactResult) => {
         if (error) {
           reject(responseMessage("Error when search users", 500, {}));

@@ -2,7 +2,10 @@ const { request } = require("express");
 
 const queryChat = {
   getChatroom: (request) => {
-    const query = `SELECT * FROM chatrooms WHERE user1_id = ${request} OR user2_id = ${request}`;
+    const { id, limit = 2, page = 1 } = request;
+    const query = `SELECT * FROM chatrooms WHERE user1_id = ${id} OR user2_id = ${id} LIMIT ${limit} OFFSET ${
+      (page - 1) * limit
+    }`;
     return query;
   },
 
@@ -19,7 +22,10 @@ const queryChat = {
   },
 
   getMessage: (request) => {
-    const query = `SELECT * FROM messages WHERE chatroom_id = ${request} ORDER BY timestamp ASC`;
+    const { chatroom_id, limit = 2, page = 1 } = request;
+    const query = `SELECT * FROM messages WHERE chatroom_id = ${chatroom_id} ORDER BY timestamp ASC LIMIT ${limit} OFFSET ${
+      (page - 1) * limit
+    }`;
     return query;
   },
 

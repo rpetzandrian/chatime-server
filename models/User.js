@@ -154,20 +154,34 @@ const UserModel = {
   deleteUser: (request) => {
     return new Promise((resolve, reject) => {
       const query = queryUser.delete(request);
-
-      db.query(query, (err) => {
-        if (!err) {
-          resolve(
-            responseMessage(
-              `Successfull! User with id ${request} has been deleted`,
-              200,
-              {}
-            )
-          );
-        } else {
-          reject(responseMessage("Error occurs when deleting user", 500, {}));
+      db.query(
+        `SELECT photo FROM users WHERE id = ${request}`,
+        (errGet, result) => {
+          console.log(result.rows[0]);
+          if (!errGet) {
+            if (result.rows[0] !== undefined) {
+              fs.unlinkSync(`public/${result.rows[0]}`);
+            }
+            db.query(query, (err) => {
+              if (!err) {
+                resolve(
+                  responseMessage(
+                    `Successfull! User with id ${request} has been deleted`,
+                    200,
+                    {}
+                  )
+                );
+              } else {
+                reject(
+                  responseMessage("Error occurs when deleting user", 500, {})
+                );
+              }
+            });
+          } else {
+            reject(responseMessage("Error occurs when deleting user", 500, {}));
+          }
         }
-      });
+      );
     });
   },
 };

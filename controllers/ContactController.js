@@ -3,8 +3,12 @@ const emptyInputMessage = require("../helpers/emptyInputMessage");
 
 const ContactController = {
   getAllContacts: async (req, res) => {
+    const request = {
+      ...req.query,
+      id: req.params.id,
+    };
     try {
-      const result = await contactModel.getAllContacts(req.params.id);
+      const result = await contactModel.getAllContacts(request);
       res.status(result.statusCode).send(result);
     } catch (err) {
       res.status(err.statusCode).send(err);
@@ -26,13 +30,11 @@ const ContactController = {
   },
 
   searchContactsByName: async (req, res) => {
-    const { id } = req.params;
-    const { name } = req.query;
+    const request = {
+      ...req.query,
+      id: req.params.id,
+    };
     try {
-      const request = {
-        id: id,
-        name: name,
-      };
       const result = await contactModel.searchContactsByName(request);
       res.status(result.statusCode).send(result);
     } catch (err) {

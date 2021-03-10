@@ -1,6 +1,6 @@
 const queryUser = {
-  getAll: (req) => {
-    const { limit = 10, page = 1 } = req;
+  getAll: (request) => {
+    const { limit = 10, page = 1 } = request;
     return `SELECT id, name, username, email, phone, photo, bio FROM users ORDER BY name ASC LIMIT ${limit} OFFSET ${
       (page - 1) * limit
     }`;
