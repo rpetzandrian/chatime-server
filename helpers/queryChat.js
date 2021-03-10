@@ -24,7 +24,8 @@ const queryChat = {
   },
 
   getLastMessage: (request) => {
-    const query = `SELECT * FROM messages WHERE chatroom_id = ${request} ORDER BY timestamp DESC`;
+    // const query = `SELECT * FROM messages WHERE chatroom_id = ${request} ORDER BY timestamp DESC`;
+    const query = `SELECT chatrooms.id, chatrooms.user1_id, chatrooms.user2_id, messages.sender_id, messages.receiver_id, messages.message_text, messages.id AS message_id, messages.image, messages.file, messages.document, messages.timestamp FROM messages INNER JOIN chatrooms ON chatrooms.id = messages.chatroom_id WHERE chatroom_id = ${request} ORDER BY messages.timestamp DESC`;
     return query;
   },
 
