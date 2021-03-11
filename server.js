@@ -6,11 +6,9 @@ const port = process.env.PORT || 5000;
 const bodyParser = require("body-parser");
 
 let whitelist = [
-  "http://localhost:3000",
-  "http://localhost:3001",
   "http://localhost:8000",
   "http://127.0.0.1:5500",
-  "http://34.232.17.16:3000",
+  "http://localhost:3000",
 ];
 let corsOptions = {
   origin: function (origin, callback) {
