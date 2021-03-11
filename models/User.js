@@ -132,6 +132,72 @@ const UserModel = {
     });
   },
 
+  updateProfile: (request) => {
+    return new Promise((resolve, reject) => {
+      db.query(`SELECT * FROM users WHERE id = ${request.id}`).then(
+        (initialValue) => {
+          if (initialValue.rows.length < 1) {
+            reject(responseMessage("User not found", 400, {}));
+            return;
+          }
+
+          if (request.password) {
+            bcrypt.hash(request.password, 10, (errHash, hash) => {
+              if (!errHash) {
+                const newRequest = {
+                  ...request,
+                  password: hash,
+                  is_admin: false,
+                };
+                const query = queryUser.update(newRequest, initialValue);
+                db.query(query, (err) => {
+                  if (!err) {
+                    if (
+                      request.photo !== undefined &&
+                      initialValue.rows[0].photo !== null
+                    ) {
+                      fs.unlinkSync(`public/${initialValue.rows[0].photo}`);
+                    }
+                    resolve(
+                      responseMessage("Success update user", 200, request.body)
+                    );
+                  } else {
+                    reject(
+                      responseMessage("Error occurrs when update user", 500, {})
+                    );
+                  }
+                });
+              } else {
+                reject(
+                  responseMessage("Error occurrs when update user", 500, {})
+                );
+              }
+            });
+          } else {
+            const query = queryUser.update(request, initialValue);
+            db.query(query, (err) => {
+              if (!err) {
+                if (
+                  request.photo !== undefined &&
+                  initialValue.rows[0].photo !== null
+                ) {
+                  fs.unlinkSync(`public/${initialValue.rows[0].photo}`);
+                }
+                resolve(
+                  responseMessage("Success update user", 200, request.body)
+                );
+              } else {
+                reject(
+                  responseMessage("Error occurrs when update user", 500, {})
+                );
+              }
+            });
+          }
+        }
+      );
+    });
+  },
+
   searchUsersByName: (request) => {
     return new Promise((resolve, reject) => {
       const query = queryUser.searchByName(request);

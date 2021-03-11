@@ -59,6 +59,23 @@ const UserController = {
     }
   },
 
+  updateProfile: async (req, res) => {
+    const request = {
+      ...req.body,
+      id: req.params.id,
+      photo:
+        req.file == undefined
+          ? undefined
+          : `uploads/images/${req.file.filename}`,
+    };
+    try {
+      const result = await userModel.updateProfile(request);
+      res.status(result.statusCode).send(result);
+    } catch (err) {
+      res.status(err.statusCode).send(err);
+    }
+  },
+
   searchUsersByName: async (req, res) => {
     try {
       const result = await userModel.searchUsersByName(req.query);

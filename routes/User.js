@@ -16,6 +16,12 @@ router.post(
   userController.addNewUser
 );
 
+router.patch(
+  "/update/:id",
+  fileUpload.uploadPhoto,
+  userController.updateProfile
+);
+
 router.patch("/:id", fileUpload.uploadPhoto, userController.updateUser);
 
 router.delete("/:id", userController.deleteUser);
