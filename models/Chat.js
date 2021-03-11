@@ -17,22 +17,24 @@ const ChatModel = {
           const query = queryChat.getLastMessage(response.rows[i].id);
           db.query(query, (err, result) => {
             let data = result.rows[0];
-            let chatroomSegment = {
-              id: data.id,
-              user1_id: data.user1_id,
-              user2_id: data.user2_id,
-              lastMessage: {
-                id: data.message_id,
-                sender_id: data.sender_id,
-                receiver_id: data.receiver_id,
-                message_text: data.message_text,
-                message_image: data.image,
-                message_file: data.file,
-                message_document: data.document,
-                timestamp: data.timestamp,
-              },
-            };
-            chatroom.push(chatroomSegment);
+            if (data !== undefined) {
+              let chatroomSegment = {
+                id: data.id,
+                user1_id: data.user1_id,
+                user2_id: data.user2_id,
+                lastMessage: {
+                  id: data.message_id,
+                  sender_id: data.sender_id,
+                  receiver_id: data.receiver_id,
+                  message_text: data.message_text,
+                  message_image: data.image,
+                  message_file: data.file,
+                  message_document: data.document,
+                  timestamp: data.timestamp,
+                },
+              };
+              chatroom.push(chatroomSegment);
+            }
             if (i == response.rows.length - 1) {
               if (!err) {
                 resolve(

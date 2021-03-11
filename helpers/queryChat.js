@@ -1,5 +1,3 @@
-const { request } = require("express");
-
 const queryChat = {
   getChatroom: (request) => {
     const { id, limit = 2, page = 1 } = request;
