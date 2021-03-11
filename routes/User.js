@@ -5,9 +5,9 @@ const verify = require("../helpers/jwt");
 
 router.get("/", verify.isAdminVerify, userController.getAllUsers);
 
-router.get("/search", userController.searchUsersByName);
+router.get("/search", verify.isAdminVerify, userController.searchUsersByName);
 
-router.get("/:id", userController.getUserById);
+router.get("/:id", verify.isAdminVerify, userController.getUserById);
 
 router.post(
   "/",
@@ -18,12 +18,18 @@ router.post(
 
 router.patch(
   "/update/:id",
+  verify.verifyUserWithId,
   fileUpload.uploadPhoto,
   userController.updateProfile
 );
 
-router.patch("/:id", fileUpload.uploadPhoto, userController.updateUser);
+router.patch(
+  "/:id",
+  verify.isAdminVerify,
+  fileUpload.uploadPhoto,
+  userController.updateUser
+);
 
-router.delete("/:id", userController.deleteUser);
+router.delete("/:id", verify.isAdminVerify, userController.deleteUser);
 
 module.exports = router;
