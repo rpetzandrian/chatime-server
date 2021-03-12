@@ -8,18 +8,18 @@ const ContactModel = {
       const query = queryContact.getAll(request).q1;
       db.query(query, (error, contact) => {
         if (error) {
-          reject(responseMessage("Error occurs when get contact", 500, {}));
+          reject(responseMessage("Error occurs when get contact", 500));
         }
 
         if (contact.rows.length < 1) {
-          reject(responseMessage("Contact not found", 400, {}));
+          reject(responseMessage("Contact not found", 400));
           return;
         }
 
         const query = queryContact.getAll(request).q2;
         db.query(query, (err, response) => {
           if (response.rows.length < 1) {
-            reject(responseMessage("Contact not found", 400, {}));
+            reject(responseMessage("Contact not found", 400));
             return;
           }
 
@@ -34,7 +34,7 @@ const ContactModel = {
               responseMessage("Success when get all contacts", 200, result)
             );
           } else {
-            reject(responseMessage("Error occurs when get contact", 500, {}));
+            reject(responseMessage("Error occurs when get contact", 500));
           }
         });
       });
@@ -46,18 +46,18 @@ const ContactModel = {
       const query = queryContact.getByFriend(request).q1;
       db.query(query, (error, contact) => {
         if (error) {
-          reject(responseMessage("Error occurs when get contact", 500, {}));
+          reject(responseMessage("Error occurs when get contact", 500));
         }
 
         if (contact.rows.length < 1) {
-          reject(responseMessage("Contact not found", 400, {}));
+          reject(responseMessage("Contact not found", 400));
           return;
         }
 
         const query = queryContact.getByFriend(request).q2;
         db.query(query, (err, response) => {
           if (response.rows.length < 1) {
-            reject(responseMessage("Contact not found", 400, {}));
+            reject(responseMessage("Contact not found", 400));
             return;
           }
 
@@ -72,7 +72,7 @@ const ContactModel = {
               responseMessage("Success when get all contacts", 200, result)
             );
           } else {
-            reject(responseMessage("Error occurs when get contact", 500, {}));
+            reject(responseMessage("Error occurs when get contact", 500));
           }
         });
       });
@@ -84,18 +84,18 @@ const ContactModel = {
       const query = queryContact.getAll(request).q1;
       db.query(query, (error, contactResult) => {
         if (error) {
-          reject(responseMessage("Error when search users", 500, {}));
+          reject(responseMessage("Error when search users", 500));
         }
 
         if (contactResult.rows.length < 1) {
-          reject(responseMessage("Contact not found", 400, {}));
+          reject(responseMessage("Contact not found", 400));
           return;
         }
 
         const query = queryContact.search(request);
         db.query(query, (err, response) => {
           if (response.rows.length < 1) {
-            reject(responseMessage("Contact not found", 400, {}));
+            reject(responseMessage("Contact not found", 400));
             return;
           }
 
@@ -110,9 +110,7 @@ const ContactModel = {
               responseMessage("Success when search contact", 200, result)
             );
           } else {
-            reject(
-              responseMessage("Error occurs when search contact", 500, {})
-            );
+            reject(responseMessage("Error occurs when search contact", 500));
           }
         });
       });
@@ -127,7 +125,7 @@ const ContactModel = {
         if (!err) {
           resolve(responseMessage("Success add new contact", 201, request));
         } else {
-          reject(responseMessage("Add contact failed", 500, {}));
+          reject(responseMessage("Add contact failed", 500));
         }
       });
     });
@@ -138,7 +136,7 @@ const ContactModel = {
       const query = queryContact.update(request, null).q1;
       db.query(query, (err, initialValue) => {
         if (initialValue.rows.length < 1) {
-          reject(responseMessage("Contact not found", 400, {}));
+          reject(responseMessage("Contact not found", 400));
           return;
         }
         const query = queryContact.update(request, initialValue).q2;
@@ -146,7 +144,7 @@ const ContactModel = {
           if (!err) {
             resolve(responseMessage("Contact updated", 200, request));
           } else {
-            reject(responseMessage("Update contact failed", 500, {}));
+            reject(responseMessage("Update contact failed", 500));
           }
         });
       });
@@ -158,9 +156,9 @@ const ContactModel = {
       const query = queryContact.delete(request);
       db.query(query, (err) => {
         if (!err) {
-          resolve(responseMessage("Delete contact success", 200, {}));
+          resolve(responseMessage("Delete contact success", 200));
         } else {
-          reject(responseMessage("Delete contact failed", 500, {}));
+          reject(responseMessage("Delete contact failed", 500));
         }
       });
     });

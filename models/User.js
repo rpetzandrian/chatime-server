@@ -11,13 +11,13 @@ const UserModel = {
       const query = queryUser.getAll(request);
       db.query(query, (err, response) => {
         if (response.rows.length < 1) {
-          reject(responseMessage("User not found", 400, {}));
+          reject(responseMessage("User not found", 400));
           return;
         }
         if (!err) {
           resolve(responseMessage("Success get Users", 200, response.rows));
         } else {
-          reject(responseMessage("Error while get data user", 500, {}));
+          reject(responseMessage("Error while get data user", 500));
         }
       });
     });
@@ -28,7 +28,7 @@ const UserModel = {
       const query = queryUser.getById(request);
       db.query(query, (err, response) => {
         if (response.rows.length < 1) {
-          reject(responseMessage("User not found", 400, {}));
+          reject(responseMessage("User not found", 400));
           return;
         }
         if (!err) {
@@ -40,7 +40,7 @@ const UserModel = {
             )
           );
         } else {
-          reject(responseMessage("Error while get data user", 500, {}));
+          reject(responseMessage("Error while get data user", 500));
         }
       });
     });
@@ -65,7 +65,7 @@ const UserModel = {
             } else {
               reject(
                 errUserExist(err, request) ||
-                  responseMessage("Error while create new user", 500, {})
+                  responseMessage("Error while create new user", 500)
               );
             }
           });
@@ -100,14 +100,12 @@ const UserModel = {
                     );
                   } else {
                     reject(
-                      responseMessage("Error occurrs when update user", 500, {})
+                      responseMessage("Error occurrs when update user", 500)
                     );
                   }
                 });
               } else {
-                reject(
-                  responseMessage("Error occurrs when update user", 500, {})
-                );
+                reject(responseMessage("Error occurrs when update user", 500));
               }
             });
           } else {
@@ -121,9 +119,7 @@ const UserModel = {
                   responseMessage("Success update user", 200, request.body)
                 );
               } else {
-                reject(
-                  responseMessage("Error occurrs when update user", 500, {})
-                );
+                reject(responseMessage("Error occurrs when update user", 500));
               }
             });
           }
@@ -137,7 +133,7 @@ const UserModel = {
       db.query(`SELECT * FROM users WHERE id = ${request.id}`).then(
         (initialValue) => {
           if (initialValue.rows.length < 1) {
-            reject(responseMessage("User not found", 400, {}));
+            reject(responseMessage("User not found", 400));
             return;
           }
 
@@ -163,14 +159,12 @@ const UserModel = {
                     );
                   } else {
                     reject(
-                      responseMessage("Error occurrs when update user", 500, {})
+                      responseMessage("Error occurrs when update user", 500)
                     );
                   }
                 });
               } else {
-                reject(
-                  responseMessage("Error occurrs when update user", 500, {})
-                );
+                reject(responseMessage("Error occurrs when update user", 500));
               }
             });
           } else {
@@ -187,9 +181,7 @@ const UserModel = {
                   responseMessage("Success update user", 200, request.body)
                 );
               } else {
-                reject(
-                  responseMessage("Error occurrs when update user", 500, {})
-                );
+                reject(responseMessage("Error occurrs when update user", 500));
               }
             });
           }
@@ -203,7 +195,7 @@ const UserModel = {
       const query = queryUser.searchByName(request);
       db.query(query, (err, response) => {
         if (response.rows.length < 1) {
-          reject(responseMessage("User not found", 400, {}));
+          reject(responseMessage("User not found", 400));
           return;
         }
         if (!err) {
@@ -211,7 +203,7 @@ const UserModel = {
             responseMessage("Success get users by name", 200, response.rows)
           );
         } else {
-          reject(responseMessage("Error occurs when searching users", 500, {}));
+          reject(responseMessage("Error occurs when searching users", 500));
         }
       });
     });
@@ -238,13 +230,11 @@ const UserModel = {
                   )
                 );
               } else {
-                reject(
-                  responseMessage("Error occurs when deleting user", 500, {})
-                );
+                reject(responseMessage("Error occurs when deleting user", 500));
               }
             });
           } else {
-            reject(responseMessage("Error occurs when deleting user", 500, {}));
+            reject(responseMessage("Error occurs when deleting user", 500));
           }
         }
       );

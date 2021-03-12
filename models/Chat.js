@@ -8,7 +8,7 @@ const ChatModel = {
       const query = queryChat.getChatroom(request);
       db.query(query, (err, response) => {
         if (response.rows.length < 1) {
-          reject(responseMessage("Chatroom not found", 400, {}));
+          reject(responseMessage("Chatroom not found", 400));
           return;
         }
 
@@ -41,9 +41,7 @@ const ChatModel = {
                   responseMessage("Success get chatroom list", 200, chatroom)
                 );
               } else {
-                reject(
-                  responseMessage("Error occurs when get chatroom", 500, {})
-                );
+                reject(responseMessage("Error occurs when get chatroom", 500));
               }
             }
           });
@@ -59,9 +57,7 @@ const ChatModel = {
         if (!err) {
           resolve(responseMessage("Success add new chatroom", 201, request));
         } else {
-          reject(
-            responseMessage("Error occurs when add new chatroom", 500, {})
-          );
+          reject(responseMessage("Error occurs when add new chatroom", 500));
         }
       });
     });
@@ -72,14 +68,14 @@ const ChatModel = {
       const query = queryChat.deleteChatroom(request).q1;
       db.query(query, (err) => {
         if (err) {
-          reject(responseMessage("Error when delete messages", 500, {}));
+          reject(responseMessage("Error when delete messages", 500));
         }
         const query = queryChat.deleteChatroom(request).q2;
         db.query(query, (err) => {
           if (!err) {
-            resolve(responseMessage("Success delete chatroom", 200, {}));
+            resolve(responseMessage("Success delete chatroom", 200));
           } else {
-            reject(responseMessage("Delete chatroom failed", 500, {}));
+            reject(responseMessage("Delete chatroom failed", 500));
           }
         });
       });
@@ -91,14 +87,14 @@ const ChatModel = {
       const query = queryChat.getMessage(request);
       db.query(query, (err, response) => {
         if (response.rows.length < 1) {
-          reject(responseMessage("Contact not found", 400, {}));
+          reject(responseMessage("Contact not found", 400));
           return;
         }
 
         if (!err) {
           resolve(responseMessage("Success get messages", 200, response.rows));
         } else {
-          reject(responseMessage("Error occurs when get messages", 500, {}));
+          reject(responseMessage("Error occurs when get messages", 500));
         }
       });
     });
@@ -109,7 +105,7 @@ const ChatModel = {
       const query = queryChat.getLastMessage(request);
       db.query(query, (err, response) => {
         if (response.rows.length < 1) {
-          reject(responseMessage("Contact not found", 400, []));
+          reject(responseMessage("Contact not found", 400));
           return;
         }
 
@@ -118,7 +114,7 @@ const ChatModel = {
             responseMessage("Success get messages", 200, response.rows[0])
           );
         } else {
-          reject(responseMessage("Error occurs when get messages", 500, {}));
+          reject(responseMessage("Error occurs when get messages", 500));
         }
       });
     });
@@ -131,7 +127,7 @@ const ChatModel = {
         if (!err) {
           resolve(responseMessage("Success add message", 201, request));
         } else {
-          reject(responseMessage("Error while add message", 500, {}));
+          reject(responseMessage("Error while add message", 500));
         }
       });
     });
@@ -142,9 +138,9 @@ const ChatModel = {
       const query = queryChat.deleteMessage(request);
       db.query(query, (err) => {
         if (!err) {
-          resolve(responseMessage("Success delete message", 200, {}));
+          resolve(responseMessage("Success delete message", 200));
         } else {
-          reject(responseMessage("Error occurs when delete message", 500, {}));
+          reject(responseMessage("Error occurs when delete message", 500));
         }
       });
     });
