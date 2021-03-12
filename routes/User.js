@@ -7,7 +7,7 @@ router.get("/", verify.isAdminVerify, userController.getAllUsers);
 
 router.get("/search", verify.isAdminVerify, userController.searchUsersByName);
 
-router.get("/:id", verify.isAdminVerify, userController.getUserById);
+router.get("/:id", verify.verifyUserWithId, userController.getUserById);
 
 router.post(
   "/",
