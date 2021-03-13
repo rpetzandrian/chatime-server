@@ -1,29 +1,30 @@
 const queryUser = {
   getAll: (request) => {
     const { limit = 10, page = 1 } = request;
-    return `SELECT id, name, username, email, phone, photo, bio FROM users ORDER BY name ASC LIMIT ${limit} OFFSET ${
+    return `SELECT * FROM users INNER JOIN user_status ON user_status.user_id = users.id ORDER BY name ASC LIMIT ${limit} OFFSET ${
       (page - 1) * limit
     }`;
   },
 
   getById: (request) => {
-    return `SELECT id, name, username, email, phone, photo, bio FROM users WHERE id = ${request}`;
+    return `SELECT * FROM users INNER JOIN user_status ON user_status.user_id = users.id WHERE id = ${request}`;
   },
 
   addNew: (request) => {
     let {
-      name,
+      name = null,
       username = null,
       email,
       password,
       phone = null,
       photo = null,
       bio = null,
+      is_online = false,
       is_admin = false,
     } = request;
 
-    const query = `INSERT INTO users(name, username, email, password, phone, photo, bio, created_at, updated_at, is_admin) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
-    const values = [
+    const query1 = `INSERT INTO users(name, username, email, password, phone, photo, bio, created_at, updated_at, is_admin) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
+    const values1 = [
       name,
       username,
       email,
@@ -36,7 +37,9 @@ const queryUser = {
       is_admin,
     ];
 
-    return { query, values };
+    const query2 = `INSERT INTO user_status(user_id, is_online) VALUES((select id from users where email='${email}'), ${is_online})`;
+
+    return { query1, values1, query2 };
   },
 
   update: (request, initialValue) => {

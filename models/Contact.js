@@ -10,6 +10,7 @@ const ContactModel = {
         if (error) {
           reject(responseMessage("Error occurs when get contact", 500));
         }
+        console.log(contact);
 
         if (contact.rows.length < 1) {
           reject(responseMessage("Contact not found", 400));

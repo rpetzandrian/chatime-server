@@ -19,14 +19,17 @@ const UserAuth = {
                     ...req,
                     password: hash,
                     is_admin: false,
+                    is_online: false,
                   };
-                  const { query, values } = queryUser.addNew(newUser);
+                  const { query1, values1, query2 } = queryUser.addNew(newUser);
 
-                  db.query(query, values, (err) => {
+                  db.query(query1, values1, (err) => {
                     if (!err) {
-                      resolve(
-                        responseMessage("Register success", 201, newUser)
-                      );
+                      db.query(query2, (err) => {
+                        resolve(
+                          responseMessage("Register success", 201, newUser)
+                        );
+                      });
                     } else {
                       reject(
                         responseMessage("Error occurs when register", 500)
@@ -71,12 +74,20 @@ const UserAuth = {
                       process.env.SECRET_KEY,
                       function (errToken, token) {
                         if (!errToken) {
-                          resolve(
-                            responseMessage(
-                              "Login success",
-                              200,
-                              "Bearer " + token
-                            )
+                          db.query(
+                            `UPDATE user_status SET is_online = true WHERE user_id = (select id from users where email = '${email}')`,
+                            (err) => {
+                              console.log(err);
+                              if (!err) {
+                                resolve(
+                                  responseMessage(
+                                    "Login success",
+                                    200,
+                                    "Bearer " + token
+                                  )
+                                );
+                              }
+                            }
                           );
                         } else {
                           reject(

@@ -51,17 +51,16 @@ const UserModel = {
       bcrypt.hash(request.password, 10, (errHash, hash) => {
         if (!errHash) {
           const newData = { ...request, password: hash };
-          const { query, values } = queryUser.addNew(newData);
-          console.log(values);
-          db.query(query, values, (err) => {
+          const { query1, values1, query2 } = queryUser.addNew(newData);
+          db.query(query1, values1, (err) => {
             if (!err) {
-              resolve(
-                responseMessage(
-                  "Successfull! User has been created",
-                  201,
-                  request
-                )
-              );
+              db.query(query2, (err) => {
+                if (!err) {
+                  resolve(responseMessage("Success create user", 201, newData));
+                } else {
+                  responseMessage("Error while create new user", 500);
+                }
+              });
             } else {
               reject(
                 errUserExist(err, request) ||
@@ -215,10 +214,9 @@ const UserModel = {
       db.query(
         `SELECT photo FROM users WHERE id = ${request}`,
         (errGet, result) => {
-          console.log(result.rows[0]);
           if (!errGet) {
-            if (result.rows[0] !== undefined) {
-              fs.unlinkSync(`public/${result.rows[0]}`);
+            if (result.rows[0].photo !== null) {
+              fs.unlinkSync(`public/${result.rows[0].photo}`);
             }
             db.query(query, (err) => {
               if (!err) {
