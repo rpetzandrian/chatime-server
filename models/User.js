@@ -91,7 +91,10 @@ const UserModel = {
                 const query = queryUser.update(newRequest, initialValue);
                 db.query(query, (err) => {
                   if (!err) {
-                    if (request.photo !== undefined) {
+                    if (
+                      request.photo !== undefined &&
+                      initialValue.rows[0] !== null
+                    ) {
                       fs.unlinkSync(`public/${initialValue.rows[0].photo}`);
                     }
                     resolve(
@@ -132,6 +135,7 @@ const UserModel = {
       db.query(`SELECT * FROM users WHERE id = ${request.id}`).then(
         (initialValue) => {
           if (initialValue.rows.length < 1) {
+            fs.unlinkSync(`public/${request.photo}`);
             reject(responseMessage("User not found", 400));
             return;
           }

@@ -1,19 +1,19 @@
 const router = require("express").Router();
 const userController = require("../controllers/UserController");
-const fileUpload = require("../helpers/fileUpload");
+const photoUpload = require("../helpers/photoUpload");
 const verify = require("../helpers/jwt");
 
-router.get("/", userController.getAllUsers);
+router.get("/", verify.isAdminVerify, userController.getAllUsers);
 
 router.get("/search", userController.searchUsersByName);
 
-router.get("/:id", userController.getUserById);
+router.get("/:id", verify.verifyUserWithId, userController.getUserById);
 
-router.post("/", fileUpload.uploadPhoto, userController.addNewUser);
+router.post("/", photoUpload.uploadPhoto, userController.addNewUser);
 
 router.patch("/update/:id", userController.updateProfile);
 
-router.patch("/:id", userController.updateUser);
+router.patch("/:id", photoUpload.uploadPhoto, userController.updateUser);
 
 router.delete("/:id", userController.deleteUser);
 

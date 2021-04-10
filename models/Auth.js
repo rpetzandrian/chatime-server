@@ -7,7 +7,7 @@ const queryUser = require("../helpers/queryUser");
 const UserAuth = {
   register: (req) => {
     return new Promise((resolve, reject) => {
-      const { email, password, name } = req;
+      const { email, password } = req;
       db.query(
         `SELECT email FROM users WHERE email = '${email}'`,
         (err, value) => {
@@ -77,14 +77,12 @@ const UserAuth = {
                           db.query(
                             `UPDATE user_status SET is_online = true WHERE user_id = (select id from users where email = '${email}')`,
                             (err) => {
-                              console.log(err);
                               if (!err) {
                                 resolve(
-                                  responseMessage(
-                                    "Login success",
-                                    200,
-                                    "Bearer " + token
-                                  )
+                                  responseMessage("Login success", 200, {
+                                    token: "Bearer " + token,
+                                    id: id,
+                                  })
                                 );
                               }
                             }

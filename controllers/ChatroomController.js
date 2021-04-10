@@ -3,7 +3,7 @@ const emptyInputMessage = require("../helpers/emptyInputMessage");
 
 const ChatroomController = {
   getAllChatrooms: async (req, res) => {
-    const id = req.params.user_id;
+    const id = req.params.id;
     try {
       const result = await chatroomModel.getAllChatrooms(id);
       res.status(result.statusCode).send(result);
@@ -13,7 +13,7 @@ const ChatroomController = {
   },
 
   getAllChatroomsImportant: async (req, res) => {
-    const id = req.params.user_id;
+    const id = req.params.id;
     try {
       const result = await chatroomModel.getAllChatroomsImportant(id);
       res.status(result.statusCode).send(result);
@@ -23,7 +23,7 @@ const ChatroomController = {
   },
 
   getAllChatroomsUnread: async (req, res) => {
-    const id = req.params.user_id;
+    const id = req.params.id;
     try {
       const result = await chatroomModel.getAllChatroomsUnread(id);
       res.status(result.statusCode).send(result);
@@ -33,7 +33,7 @@ const ChatroomController = {
   },
 
   getAllChatroomsRead: async (req, res) => {
-    const id = req.params.user_id;
+    const id = req.params.id;
     try {
       const result = await chatroomModel.getAllChatroomsRead(id);
       res.status(result.statusCode).send(result);
@@ -44,11 +44,26 @@ const ChatroomController = {
 
   addNewChatroom: async (req, res) => {
     const request = {
-      user1: req.params.user_id,
+      user1: req.params.id,
       user2: req.body.user2,
     };
     try {
       const result = await chatroomModel.addNewChatroom(request);
+      res.status(result.statusCode).send(result);
+    } catch (err) {
+      res.status(err.statusCode).send(err);
+    }
+  },
+
+  updateChatroom: async (req, res) => {
+    const request = {
+      id: req.params.id,
+      chatroom_id: req.params.chatroom_id,
+      is_pinned: req.body.is_pinned === undefined ? null : req.body.is_pinned,
+      is_saved: req.body.is_saved === undefined ? null : req.body.is_saved,
+    };
+    try {
+      const result = await chatroomModel.updateChatroom(request);
       res.status(result.statusCode).send(result);
     } catch (err) {
       res.status(err.statusCode).send(err);

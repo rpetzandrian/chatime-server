@@ -27,7 +27,7 @@ const UserController = {
       photo:
         req.file == undefined
           ? undefined
-          : `uploads/images/${req.file.filename}`,
+          : `uploads/photos/${req.file.filename}`,
     };
     const { email, password, name } = req.body;
     if (email !== undefined && password !== undefined && name !== undefined) {
@@ -49,7 +49,7 @@ const UserController = {
       photo:
         req.file == undefined
           ? undefined
-          : `uploads/images/${req.file.filename}`,
+          : `uploads/photos/${req.file.filename}`,
     };
     try {
       const result = await userModel.updateUser(request);
@@ -66,7 +66,7 @@ const UserController = {
       photo:
         req.file == undefined
           ? undefined
-          : `uploads/images/${req.file.filename}`,
+          : `uploads/photos/${req.file.filename}`,
     };
     try {
       const result = await userModel.updateProfile(request);
