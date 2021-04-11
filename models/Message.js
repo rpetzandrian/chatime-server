@@ -16,10 +16,6 @@ const MessageModel = {
           const getMessages = queryMessage.getAll(request).getMessages;
           db.query(getMessages, (err, response) => {
             if (!err) {
-              if (response.rowCount < 1) {
-                reject(responseMessage("Message empty", 400));
-              }
-
               const data = {
                 chatroom_id: result.rows[0].chatroom_id,
                 user1: result.rows[0].user1,
@@ -29,7 +25,7 @@ const MessageModel = {
                 user2_name: result.rows[0].friend_name,
                 is_online: result.rows[0].is_online,
                 contact_id: result.rows[0].contact_id,
-                messages: response.rows,
+                messages: response.rows || null,
               };
 
               resolve(responseMessage("Success get Message", 200, data));

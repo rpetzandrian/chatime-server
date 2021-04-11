@@ -1,6 +1,6 @@
 const queryContact = {
   getAll: (request) => {
-    const { id, limit = 2, page = 1 } = request;
+    const { id, limit = 100, page = 1 } = request;
     const q1 = `SELECT id, user_id FROM contacts WHERE user_id = ${id}`;
     const q2 = `SELECT contacts.friend_id, contacts.friend_name, username, email, phone, photo, bio FROM contacts INNER JOIN users ON contacts.friend_id = users.id WHERE contacts.user_id = ${id} LIMIT ${limit} OFFSET ${
       (page - 1) * limit
@@ -17,7 +17,7 @@ const queryContact = {
   },
 
   search: (request) => {
-    const { id, name, limit = 2, page = 1 } = request;
+    const { id, name, limit = 100, page = 1 } = request;
     const query = `SELECT contacts.friend_id, contacts.friend_name, username, email, phone, photo, bio FROM contacts INNER JOIN users ON contacts.friend_id = users.id WHERE LOWER(contacts.friend_name) LIKE '%${name.toLowerCase()}%' ORDER BY contacts.friend_name ASC LIMIT ${limit} OFFSET ${
       (page - 1) * limit
     } `;

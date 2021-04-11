@@ -22,9 +22,19 @@ router.get(
   chatroomController.getAllChatroomsRead
 );
 
+router.get(
+  "/:id/search",
+  verify.verifyUserWithId,
+  chatroomController.getAllChatroomsRead
+);
+
 router.post("/:id", verify.verifyUserWithId, chatroomController.addNewChatroom);
 
-router.patch("/:id/:chatroom_id", chatroomController.updateChatroom);
+router.patch(
+  "/:id/:chatroom_id",
+  verify.verifyUserWithId,
+  chatroomController.updateChatroom
+);
 
 router.delete(
   "/:id/:chatroom_id",

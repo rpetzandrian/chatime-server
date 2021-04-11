@@ -42,6 +42,19 @@ const ChatroomController = {
     }
   },
 
+  searchByFriend: async (req, res) => {
+    const request = {
+      id: req.params.id,
+      search: req.query.name,
+    };
+    try {
+      const result = await chatroomModel.searchChatrooms(request);
+      res.status(result.statusCode).send(result);
+    } catch (err) {
+      res.status(err.statusCode).send(err);
+    }
+  },
+
   addNewChatroom: async (req, res) => {
     const request = {
       user1: req.params.id,

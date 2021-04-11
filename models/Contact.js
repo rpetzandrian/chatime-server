@@ -119,15 +119,47 @@ const ContactModel = {
 
   addNewContact: (request) => {
     return new Promise((resolve, reject) => {
-      const { query, values } = queryContact.addNew(request);
+      console.log(request, "1");
+      db.query(
+        `select id from users where phone = '${request.phone}'`,
+        (err, response) => {
+          console.log(err, "aha");
+          if (!err) {
+            if (response.rowCount < 1) {
+              reject(responseMessage("User not found", 400));
+            }
 
-      db.query(query, values, (err) => {
-        if (!err) {
-          resolve(responseMessage("Success add new contact", 201, request));
-        } else {
-          reject(responseMessage("Add contact failed", 500));
+            const req = {
+              ...request,
+              friend_id: parseInt(response.rows[0].id),
+            };
+            const { query, values } = queryContact.addNew(req);
+            db.query(query, values, (err) => {
+              console.log(err, "ihih");
+              if (!err) {
+                const newReq = {
+                  user_id: parseInt(response.rows[0].id),
+                  friend_id: request.user_id,
+                  friend_name: null,
+                };
+                const { query, values } = queryContact.addNew(newReq);
+                db.query(query, values, (err) => {
+                  console.log(err, "uhuk");
+                  if (!err) {
+                    resolve(responseMessage("Contact has been created", 201));
+                  } else {
+                    reject(responseMessage("Add contact failed", 500));
+                  }
+                });
+              } else {
+                reject(responseMessage("Add contact failed", 500));
+              }
+            });
+          } else {
+            reject(responseMessage("Add contact failed", 500));
+          }
         }
-      });
+      );
     });
   },
 

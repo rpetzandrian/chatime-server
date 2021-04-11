@@ -44,12 +44,12 @@ const ContactController = {
 
   addNewContact: async (req, res) => {
     const { id } = req.params;
-    const { friend_id, friend_name } = req.body;
-    if (id !== undefined && friend_id !== undefined) {
+    const { phone, friend_name } = req.body;
+    if (id !== undefined && phone !== undefined) {
       try {
         const request = {
           user_id: parseInt(id),
-          friend_id: parseInt(friend_id),
+          phone: phone,
           friend_name: friend_name,
         };
         const result = await contactModel.addNewContact(request);
