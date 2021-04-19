@@ -23,6 +23,7 @@ const MessageModel = {
                 user2: result.rows[0].user2,
                 user2_photo: result.rows[0].user2_photo,
                 user2_name: result.rows[0].friend_name,
+                user2_phone: result.rows[0].phone,
                 is_online: result.rows[0].is_online,
                 contact_id: result.rows[0].contact_id,
                 messages: response.rows || null,
@@ -57,84 +58,18 @@ const MessageModel = {
     return new Promise((resolve, reject) => {
       const query = queryMessage.addNew(request).query;
       const values = queryMessage.addNew(request).values;
-      db.query(query, values, (err) => {
+      db.query(query, values, (err, result) => {
         if (!err) {
-          const query = queryMessage.findOne(request);
-          db.query(query, (err, result) => {
-            if (!err) {
-              const subReq = { ...request, id: result.rows[0].id };
-              if (subReq.images !== null) {
+          const subReq = { ...request, id: result.rows[0].id };
+          if (subReq.images !== null) {
+            db.query(
+              `INSERT INTO message_img(message_id, images) VALUES(${subReq.id}, '${subReq.images}')`,
+              (err) => {
+                if (err) {
+                  reject(responseMessage("Error when added images", 500));
+                }
                 db.query(
-                  `INSERT INTO message_img(message_id, images) VALUES(${subReq.id}, '${subReq.images}')`,
-                  (err) => {
-                    if (err) {
-                      reject(responseMessage("Error when added images", 500));
-                    }
-                    db.query(
-                      `UPDATE chatrooms SET timestamp = 'now()' WHERE id = ${request.chatroom_id}`,
-                      (err) => {
-                        if (!err) {
-                          resolve(
-                            responseMessage(
-                              "Success create Message",
-                              201,
-                              request
-                            )
-                          );
-                        }
-                      }
-                    );
-                  }
-                );
-              } else if (subReq.file !== null) {
-                db.query(
-                  `INSERT INTO message_file(message_id, file) VALUES(${subReq.id}, '${subReq.file}')`,
-                  (err) => {
-                    if (err) {
-                      reject(responseMessage("Error when added file", 500));
-                    }
-                    db.query(
-                      `UPDATE chatrooms SET timestamp = 'now()' WHERE id = ${request.chatroom_id}`,
-                      (err) => {
-                        if (!err) {
-                          resolve(
-                            responseMessage(
-                              "Success create Message",
-                              201,
-                              request
-                            )
-                          );
-                        }
-                      }
-                    );
-                  }
-                );
-              } else if (subReq.document !== null) {
-                db.query(
-                  `INSERT INTO message_doc(message_id, document) VALUES(${subReq.id}, '${subReq.document}')`,
-                  (err) => {
-                    if (err) {
-                      reject(responseMessage("Error when added document", 500));
-                    }
-                    db.query(
-                      `UPDATE chatrooms SET timestamp = 'now()' WHERE id = ${request.chatroom_id}`,
-                      (err) => {
-                        if (!err) {
-                          resolve(
-                            responseMessage(
-                              "Success create Message",
-                              201,
-                              request
-                            )
-                          );
-                        }
-                      }
-                    );
-                  }
-                );
-              } else {
-                db.query(
-                  `UPDATE chatrooms SET timestamp = 'now()' WHERE id = ${request.chatroom_id}`,
+                  `UPDATE chatrooms SET lastmessage = ${result.rows[0].id} WHERE id = ${request.chatroom_id}`,
                   (err) => {
                     if (!err) {
                       resolve(
@@ -144,10 +79,57 @@ const MessageModel = {
                   }
                 );
               }
-            } else {
-              reject(responseMessage("Error when create message", 500));
-            }
-          });
+            );
+          } else if (subReq.file !== null) {
+            db.query(
+              `INSERT INTO message_file(message_id, file) VALUES(${subReq.id}, '${subReq.file}')`,
+              (err) => {
+                if (err) {
+                  reject(responseMessage("Error when added file", 500));
+                }
+                db.query(
+                  `UPDATE chatrooms SET lastmessage = ${result.rows[0].id} WHERE id = ${request.chatroom_id}`,
+                  (err) => {
+                    if (!err) {
+                      resolve(
+                        responseMessage("Success create Message", 201, request)
+                      );
+                    }
+                  }
+                );
+              }
+            );
+          } else if (subReq.document !== null) {
+            db.query(
+              `INSERT INTO message_doc(message_id, document) VALUES(${subReq.id}, '${subReq.document}')`,
+              (err) => {
+                if (err) {
+                  reject(responseMessage("Error when added document", 500));
+                }
+                db.query(
+                  `UPDATE chatrooms SET lastmessage = ${result.rows[0].id} WHERE id = ${request.chatroom_id}`,
+                  (err) => {
+                    if (!err) {
+                      resolve(
+                        responseMessage("Success create Message", 201, request)
+                      );
+                    }
+                  }
+                );
+              }
+            );
+          } else {
+            db.query(
+              `UPDATE chatrooms SET lastmessage = ${result.rows[0].id} WHERE id = ${request.chatroom_id}`,
+              (err) => {
+                if (!err) {
+                  resolve(
+                    responseMessage("Success create Message", 201, request)
+                  );
+                }
+              }
+            );
+          }
         } else {
           reject(responseMessage("Error when create message", 500));
         }

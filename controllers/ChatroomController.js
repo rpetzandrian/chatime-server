@@ -42,10 +42,10 @@ const ChatroomController = {
     }
   },
 
-  searchByFriend: async (req, res) => {
+  searchByKeyword: async (req, res) => {
     const request = {
       id: req.params.id,
-      search: req.query.name,
+      search: req.query.keyword,
     };
     try {
       const result = await chatroomModel.searchChatrooms(request);

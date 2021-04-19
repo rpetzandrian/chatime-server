@@ -13,61 +13,7 @@ const ChatroomModel = {
             reject(responseMessage("Chatroom not found", 400));
           }
 
-          let chatroom = [];
-          for (let i = 0; i < response.rows.length; i++) {
-            const query = queryChatroom.getAll(response.rows[i].chatroom_id)
-              .query2;
-            db.query(query, (err, result) => {
-              if (!err) {
-                if (result.rows[0] !== undefined) {
-                  const data = {
-                    id: response.rows[i].chatroom_id,
-                    user1: response.rows[i].user1,
-                    user1_photo: response.rows[i].user1_photo,
-                    user2: response.rows[i].user2,
-                    user2_name: response.rows[i].friend_name,
-                    user2_photo: response.rows[i].user2_photo,
-                    user2_phone: response.rows[i].phone,
-                    is_online: response.rows[i].is_online,
-                    is_pinned: response.rows[i].is_pinned,
-                    is_saved: response.rows[i].is_saved,
-                    unread: response.rows[i].unread,
-                    timestamp: response.rows[i].timestamp,
-                    lastMessage: result.rows[0].text,
-                    lastRead: result.rows[0].is_read,
-                    lastsender: result.rows[0].sender,
-                  };
-                  chatroom.push(data);
-                } else {
-                  const data = {
-                    id: response.rows[i].chatroom_id,
-                    user1: response.rows[i].user1,
-                    user1_photo: response.rows[i].user1_photo,
-                    user2: response.rows[i].user2,
-                    user2_name: response.rows[i].friend_name,
-                    user2_photo: response.rows[i].user2_photo,
-                    user2_phone: response.rows[i].phone,
-                    is_online: response.rows[i].is_online,
-                    is_pinned: response.rows[i].is_pinned,
-                    is_saved: response.rows[i].is_saved,
-                    unread: response.rows[i].unread,
-                    timestamp: response.rows[i].timestamp,
-                    lastMessage: null,
-                    lastRead: null,
-                    lastsender: null,
-                  };
-                  chatroom.push(data);
-                }
-                if (i == response.rows.length - 1) {
-                  resolve(
-                    responseMessage("Success get chatroom", 200, chatroom)
-                  );
-                }
-              } else {
-                reject(responseMessage("Get chatrooms failed", 500));
-              }
-            });
-          }
+          resolve(responseMessage("Success get chatroom", 200, response.rows));
         } else {
           reject(responseMessage("Get chatroom failed", 500));
         }
@@ -84,62 +30,7 @@ const ChatroomModel = {
             reject(responseMessage("Chatroom not found", 400));
           }
 
-          let chatroom = [];
-          for (let i = 0; i < response.rows.length; i++) {
-            const query = queryChatroom.getAllImportant(
-              response.rows[i].chatroom_id
-            ).query2;
-            db.query(query, (err, result) => {
-              if (!err) {
-                if (result.rows[0] !== undefined) {
-                  const data = {
-                    id: response.rows[i].chatroom_id,
-                    user1: response.rows[i].user1,
-                    user1_photo: response.rows[i].user1_photo,
-                    user2: response.rows[i].user2,
-                    user2_name: response.rows[i].friend_name,
-                    user2_photo: response.rows[i].user2_photo,
-                    user2_phone: response.rows[i].phone,
-                    is_online: response.rows[i].is_online,
-                    is_pinned: response.rows[i].is_pinned,
-                    is_saved: response.rows[i].is_saved,
-                    unread: response.rows[i].unread,
-                    timestamp: response.rows[i].timestamp,
-                    lastMessage: result.rows[0].text,
-                    lastRead: result.rows[0].is_read,
-                    lastsender: result.rows[0].sender,
-                  };
-                  chatroom.push(data);
-                } else {
-                  const data = {
-                    id: response.rows[i].chatroom_id,
-                    user1: response.rows[i].user1,
-                    user1_photo: response.rows[i].user1_photo,
-                    user2: response.rows[i].user2,
-                    user2_name: response.rows[i].friend_name,
-                    user2_photo: response.rows[i].user2_photo,
-                    user2_phone: response.rows[i].phone,
-                    is_online: response.rows[i].is_online,
-                    is_pinned: response.rows[i].is_pinned,
-                    is_saved: response.rows[i].is_saved,
-                    unread: response.rows[i].unread,
-                    timestamp: response.rows[i].timestamp,
-                    lastMessage: null,
-                    lastRead: null,
-                    lastsender: null,
-                  };
-                  chatroom.push(data);
-                }
-                if (i == response.rows.length - 1) {
-                  resolve(
-                    responseMessage("Success get chatroom", 200, chatroom)
-                  );
-                }
-              } else {
-                reject(responseMessage("Get chatrooms failed", 500));
-              }
-            });
-          }
+          resolve(responseMessage("Success get chatroom", 200, response.rows));
         } else {
           reject(responseMessage("Get chatroom failed", 500));
         }
@@ -156,62 +47,7 @@ const ChatroomModel = {
             reject(responseMessage("Chatroom not found", 400));
           }
 
-          let chatroom = [];
-          for (let i = 0; i < response.rows.length; i++) {
-            const query = queryChatroom.getAllUnread(
-              response.rows[i].chatroom_id
-            ).query2;
-            db.query(query, (err, result) => {
-              if (!err) {
-                if (result.rows[0] !== undefined) {
-                  const data = {
-                    id: response.rows[i].chatroom_id,
-                    user1: response.rows[i].user1,
-                    user1_photo: response.rows[i].user1_photo,
-                    user2: response.rows[i].user2,
-                    user2_name: response.rows[i].friend_name,
-                    user2_photo: response.rows[i].user2_photo,
-                    user2_phone: response.rows[i].phone,
-                    is_online: response.rows[i].is_online,
-                    is_pinned: response.rows[i].is_pinned,
-                    is_saved: response.rows[i].is_saved,
-                    unread: response.rows[i].unread,
-                    timestamp: response.rows[i].timestamp,
-                    lastMessage: result.rows[0].text,
-                    lastRead: result.rows[0].is_read,
-                    lastsender: result.rows[0].sender,
-                  };
-                  chatroom.push(data);
-                } else {
-                  const data = {
-                    id: response.rows[i].chatroom_id,
-                    user1: response.rows[i].user1,
-                    user1_photo: response.rows[i].user1_photo,
-                    user2: response.rows[i].user2,
-                    user2_name: response.rows[i].friend_name,
-                    user2_photo: response.rows[i].user2_photo,
-                    user2_phone: response.rows[i].phone,
-                    is_online: response.rows[i].is_online,
-                    is_pinned: response.rows[i].is_pinned,
-                    is_saved: response.rows[i].is_saved,
-                    unread: response.rows[i].unread,
-                    timestamp: response.rows[i].timestamp,
-                    lastMessage: null,
-                    lastRead: null,
-                    lastsender: null,
-                  };
-                  chatroom.push(data);
-                }
-                if (i == response.rows.length - 1) {
-                  resolve(
-                    responseMessage("Success get chatroom", 200, chatroom)
-                  );
-                }
-              } else {
-                reject(responseMessage("Get chatrooms failed", 500));
-              }
-            });
-          }
+          resolve(responseMessage("Success get chatroom", 200, response.rows));
         } else {
           reject(responseMessage("Get chatroom failed", 500));
         }
@@ -228,61 +64,7 @@ const ChatroomModel = {
             reject(responseMessage("Chatroom not found", 400));
           }
 
-          let chatroom = [];
-          for (let i = 0; i < response.rows.length; i++) {
-            const query = queryChatroom.getAllRead(response.rows[i].chatroom_id)
-              .query2;
-            db.query(query, (err, result) => {
-              if (!err) {
-                if (result.rows[0] !== undefined) {
-                  const data = {
-                    id: response.rows[i].chatroom_id,
-                    user1: response.rows[i].user1,
-                    user1_photo: response.rows[i].user1_photo,
-                    user2: response.rows[i].user2,
-                    user2_name: response.rows[i].friend_name,
-                    user2_photo: response.rows[i].user2_photo,
-                    user2_phone: response.rows[i].phone,
-                    is_online: response.rows[i].is_online,
-                    is_pinned: response.rows[i].is_pinned,
-                    is_saved: response.rows[i].is_saved,
-                    unread: response.rows[i].unread,
-                    timestamp: response.rows[i].timestamp,
-                    lastMessage: result.rows[0].text,
-                    lastRead: result.rows[0].is_read,
-                    lastsender: result.rows[0].sender,
-                  };
-                  chatroom.push(data);
-                } else {
-                  const data = {
-                    id: response.rows[i].chatroom_id,
-                    user1: response.rows[i].user1,
-                    user1_photo: response.rows[i].user1_photo,
-                    user2: response.rows[i].user2,
-                    user2_name: response.rows[i].friend_name,
-                    user2_photo: response.rows[i].user2_photo,
-                    user2_phone: response.rows[i].phone,
-                    is_online: response.rows[i].is_online,
-                    is_pinned: response.rows[i].is_pinned,
-                    is_saved: response.rows[i].is_saved,
-                    unread: response.rows[i].unread,
-                    timestamp: response.rows[i].timestamp,
-                    lastMessage: null,
-                    lastRead: null,
-                    lastsender: null,
-                  };
-                  chatroom.push(data);
-                }
-                if (i == response.rows.length - 1) {
-                  resolve(
-                    responseMessage("Success get chatroom", 200, chatroom)
-                  );
-                }
-              } else {
-                reject(responseMessage("Get chatrooms failed", 500));
-              }
-            });
-          }
+          resolve(responseMessage("Success get chatroom", 200, response.rows));
         } else {
           reject(responseMessage("Get chatroom failed", 500));
         }
@@ -299,62 +81,7 @@ const ChatroomModel = {
             reject(responseMessage("Chatroom not found", 400));
           }
 
-          let chatroom = [];
-          for (let i = 0; i < response.rows.length; i++) {
-            const query = queryChatroom.getAllUnread(
-              response.rows[i].chatroom_id
-            ).query2;
-            db.query(query, (err, result) => {
-              if (!err) {
-                if (result.rows[0] !== undefined) {
-                  const data = {
-                    id: response.rows[i].chatroom_id,
-                    user1: response.rows[i].user1,
-                    user1_photo: response.rows[i].user1_photo,
-                    user2: response.rows[i].user2,
-                    user2_name: response.rows[i].friend_name,
-                    user2_photo: response.rows[i].user2_photo,
-                    user2_phone: response.rows[i].phone,
-                    is_online: response.rows[i].is_online,
-                    is_pinned: response.rows[i].is_pinned,
-                    is_saved: response.rows[i].is_saved,
-                    unread: response.rows[i].unread,
-                    timestamp: response.rows[i].timestamp,
-                    lastMessage: result.rows[0].text,
-                    lastRead: result.rows[0].is_read,
-                    lastsender: result.rows[0].sender,
-                  };
-                  chatroom.push(data);
-                } else {
-                  const data = {
-                    id: response.rows[i].chatroom_id,
-                    user1: response.rows[i].user1,
-                    user1_photo: response.rows[i].user1_photo,
-                    user2: response.rows[i].user2,
-                    user2_name: response.rows[i].friend_name,
-                    user2_photo: response.rows[i].user2_photo,
-                    user2_phone: response.rows[i].phone,
-                    is_online: response.rows[i].is_online,
-                    is_pinned: response.rows[i].is_pinned,
-                    is_saved: response.rows[i].is_saved,
-                    unread: response.rows[i].unread,
-                    timestamp: response.rows[i].timestamp,
-                    lastMessage: null,
-                    lastRead: null,
-                    lastsender: null,
-                  };
-                  chatroom.push(data);
-                }
-                if (i == response.rows.length - 1) {
-                  resolve(
-                    responseMessage("Success get chatroom", 200, chatroom)
-                  );
-                }
-              } else {
-                reject(responseMessage("Get chatrooms failed", 500));
-              }
-            });
-          }
+          resolve(responseMessage("Success get chatroom", 200, response.rows));
         } else {
           reject(responseMessage("Get chatrooms failed", 500));
         }

@@ -119,42 +119,41 @@ const ContactModel = {
 
   addNewContact: (request) => {
     return new Promise((resolve, reject) => {
-      console.log(request, "1");
       db.query(
         `select id from users where phone = '${request.phone}'`,
         (err, response) => {
-          console.log(err, "aha");
           if (!err) {
-            if (response.rowCount < 1) {
+            if (response.rowCount === 0) {
               reject(responseMessage("User not found", 400));
-            }
-
-            const req = {
-              ...request,
-              friend_id: parseInt(response.rows[0].id),
-            };
-            const { query, values } = queryContact.addNew(req);
-            db.query(query, values, (err) => {
-              console.log(err, "ihih");
-              if (!err) {
-                const newReq = {
-                  user_id: parseInt(response.rows[0].id),
-                  friend_id: request.user_id,
-                  friend_name: null,
-                };
-                const { query, values } = queryContact.addNew(newReq);
-                db.query(query, values, (err) => {
-                  console.log(err, "uhuk");
+            } else {
+              db.query(
+                `select id from contacts where user_id = ${request.user_id} and friend_id = ${response.rows[0].id}`,
+                (err, result) => {
                   if (!err) {
-                    resolve(responseMessage("Contact has been created", 201));
+                    if (result.rowCount === 0) {
+                      const req = {
+                        ...request,
+                        friend_id: parseInt(response.rows[0].id),
+                      };
+                      const { query, values } = queryContact.addNew(req);
+                      db.query(query, values, (err) => {
+                        if (!err) {
+                          resolve(
+                            responseMessage("Contact has been created", 201)
+                          );
+                        } else {
+                          reject(responseMessage("Add contact failed", 500));
+                        }
+                      });
+                    } else {
+                      reject(responseMessage("Contacts exist", 400));
+                    }
                   } else {
                     reject(responseMessage("Add contact failed", 500));
                   }
-                });
-              } else {
-                reject(responseMessage("Add contact failed", 500));
-              }
-            });
+                }
+              );
+            }
           } else {
             reject(responseMessage("Add contact failed", 500));
           }

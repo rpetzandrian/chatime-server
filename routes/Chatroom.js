@@ -25,7 +25,7 @@ router.get(
 router.get(
   "/:id/search",
   verify.verifyUserWithId,
-  chatroomController.getAllChatroomsRead
+  chatroomController.searchByKeyword
 );
 
 router.post("/:id", verify.verifyUserWithId, chatroomController.addNewChatroom);

@@ -1,16 +1,17 @@
 const queryMessage = {
   getAll: (request) => {
-    const getchatroom = `SELECT a.id as chatroom_id, user1, user2, c.id as contact_id, c.friend_name, c.photo as user2_photo, c.phone, c.is_online, e.photo as user1_photo
+    const getchatroom = `SELECT a.id as chatroom_id, a.timestamp, user1, user2, is_pinned, is_saved, c.id as contact_id, c.friend_name, count(d.is_read) as unread, e.photo as user1_photo, f.photo as user2_photo, f.phone
     from chatrooms as a
     inner join (select a.user_id as user1, b.user_id as user2, a.chatroom_id, a.is_pinned, a.is_saved
     from chatroom_members as a, chatroom_members as b
     where a.chatroom_id = b.chatroom_id and a.user_id = ${request.id} and b.user_id != ${request.id}) as b
     on b.chatroom_id = a.id
-    inner join (select a.id, a.user_id, a.friend_id, a.friend_name, b.photo, b.phone, c.is_online from contacts as a
-    inner join users as b on b.id = a.friend_id inner join user_status as c on c.user_id = a.friend_id) as c on c.user_id = user1 and c.friend_id = user2
+    left join (select a.id, a.user_id, a.friend_id, a.friend_name from contacts as a) as c on c.user_id = user1 and c.friend_id = user2
+    left join (select * from messages where sender != ${request.id} and is_read = false) as d on d.chatroom_id = a.id
 	  inner join users as e on e.id = user1
-	  where a.id = ${request.chatroom_id}
-    group by a.id, user1, user2, contact_id, c.friend_name, user2_photo, user1_photo, c.phone, c.is_online`;
+	  inner join users as f on f.id = user2
+    where a.id = ${request.chatroom_id}
+    group by a.id, user1, user2, is_pinned, is_saved, contact_id, c.friend_name, user1_photo, user2_photo, f.phone`;
 
     const getMessages = `select messages.id, messages.sender, messages.text, messages.is_read, messages.timestamp, message_img.images, message_doc.document, message_file.file, message_loc.long, message_loc.lat from messages 
     left join message_img on message_img.message_id = messages.id
@@ -38,7 +39,7 @@ const queryMessage = {
 
   addNew: (request) => {
     const { chatroom_id, sender, text } = request;
-    const query = `INSERT INTO messages(chatroom_id, sender, text, is_read, timestamp) VALUES($1, $2, $3, $4, $5)`;
+    const query = `INSERT INTO messages(chatroom_id, sender, text, is_read, timestamp) VALUES($1, $2, $3, $4, $5) RETURNING id`;
     const values = [chatroom_id, sender, text, false, "now()"];
 
     return { query, values };
