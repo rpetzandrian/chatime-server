@@ -28,21 +28,12 @@ const MessageController = {
   },
 
   addNewMessage: async (req, res) => {
-    if (req.file !== undefined) {
+    if (req.files !== undefined) {
       const request = {
         ...req.body,
-        images:
-          req.file.fieldname == "images"
-            ? `uploads/images/${req.file.filename}`
-            : null,
-        file:
-          req.file.fieldname == "file"
-            ? `uploads/files/${req.file.filename}`
-            : null,
-        document:
-          req.file.fieldname == "document"
-            ? `uploads/documents/${req.file.filename}`
-            : null,
+        images: req.files[0].fieldname == "images" ? req.files : null,
+        file: req.files[0].fieldname == "file" ? req.files : null,
+        document: req.files[0].fieldname == "document" ? req.files : null,
       };
       try {
         const result = await messageModel.addNewMessage(request);

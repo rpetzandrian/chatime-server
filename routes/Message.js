@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const messageController = require("../controllers/MessageController");
 const fileUpload = require("../helpers/fileUploads");
+const { verifyUserWithId } = require("../helpers/jwt");
 const verify = require("../helpers/jwt");
 
 router.get(
@@ -35,6 +36,10 @@ router.post(
   messageController.addNewMessage
 );
 
-router.delete("/:message_id", messageController.deleteMessage);
+router.delete(
+  "/:id/:message_id",
+  verifyUserWithId,
+  messageController.deleteMessage
+);
 
 module.exports = router;

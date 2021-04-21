@@ -44,19 +44,39 @@ let fileFilter = (req, file, cb) => {
   }
 };
 
-let limits = {
+let limitsImage = {
+  fileSize: 5000000,
+};
+
+let limitsDocument = {
   fileSize: 20000000,
 };
 
-let upload = multer({
+let limitsFile = {
+  fileSize: 50000000,
+};
+
+let uploadImage = multer({
   storage: storage,
   fileFilter: fileFilter,
-  limits: limits,
+  limits: limitsImage,
+});
+
+let uploadDoc = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: limitsDocument,
+});
+
+let uploadFile = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: limitsFile,
 });
 
 const uploadHandler = {
   uploadImage: (req, res, next) => {
-    const uploadedImages = upload.single("images");
+    const uploadedImages = uploadImage.array("images", 10);
     uploadedImages(req, res, (err) => {
       if (err instanceof multer.MulterError) {
         // A Multer error occurred when uploading.
@@ -77,7 +97,7 @@ const uploadHandler = {
   },
 
   uploadFile: (req, res, next) => {
-    const uploadedFile = upload.single("file");
+    const uploadedFile = uploadFile.array("file", 1);
     uploadedFile(req, res, (err) => {
       if (err instanceof multer.MulterError) {
         // A Multer error occurred when uploading.
@@ -98,7 +118,7 @@ const uploadHandler = {
   },
 
   uploadDoc: (req, res, next) => {
-    const uploadedDoc = upload.single("document");
+    const uploadedDoc = uploadDoc.array("document", 3);
     uploadedDoc(req, res, (err) => {
       if (err instanceof multer.MulterError) {
         // A Multer error occurred when uploading.

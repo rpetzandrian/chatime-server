@@ -1,6 +1,6 @@
 const queryMessage = {
   getAll: (request) => {
-    const getchatroom = `SELECT a.id as chatroom_id, a.timestamp, user1, user2, is_pinned, is_saved, c.id as contact_id, c.friend_name, count(d.is_read) as unread, e.photo as user1_photo, f.photo as user2_photo, f.phone
+    const getchatroom = `SELECT a.id as chatroom_id, a.timestamp, user1, user2, is_pinned, is_saved, c.id as contact_id, c.friend_name, count(d.is_read) as unread, e.photo as user1_photo, f.photo as user2_photo, f.phone, f.is_Online
     from chatrooms as a
     inner join (select a.user_id as user1, b.user_id as user2, a.chatroom_id, a.is_pinned, a.is_saved
     from chatroom_members as a, chatroom_members as b
@@ -9,9 +9,9 @@ const queryMessage = {
     left join (select a.id, a.user_id, a.friend_id, a.friend_name from contacts as a) as c on c.user_id = user1 and c.friend_id = user2
     left join (select * from messages where sender != ${request.id} and is_read = false) as d on d.chatroom_id = a.id
 	  inner join users as e on e.id = user1
-	  inner join users as f on f.id = user2
+	  inner join (select a.id, a.phone, a.photo, b.is_online from users as a inner join user_status as b on b.user_id = a.id) as f on f.id = user2
     where a.id = ${request.chatroom_id}
-    group by a.id, user1, user2, is_pinned, is_saved, contact_id, c.friend_name, user1_photo, user2_photo, f.phone`;
+    group by a.id, user1, user2, is_pinned, is_saved, contact_id, c.friend_name, user1_photo, user2_photo, f.phone, f.is_online`;
 
     const getMessages = `select messages.id, messages.sender, messages.text, messages.is_read, messages.timestamp, message_img.images, message_doc.document, message_file.file, message_loc.long, message_loc.lat from messages 
     left join message_img on message_img.message_id = messages.id
@@ -38,7 +38,7 @@ const queryMessage = {
   },
 
   addNew: (request) => {
-    const { chatroom_id, sender, text } = request;
+    const { chatroom_id, sender, text = null } = request;
     const query = `INSERT INTO messages(chatroom_id, sender, text, is_read, timestamp) VALUES($1, $2, $3, $4, $5) RETURNING id`;
     const values = [chatroom_id, sender, text, false, "now()"];
 
