@@ -254,40 +254,45 @@ const MessageModel = {
 
   deleteMessage: (request) => {
     return new Promise((resolve, reject) => {
-      const getQuery = queryMessage.delete(request).get;
+      const getQuery = queryMessage.delete(request.id).get;
       db.query(getQuery, (err, result) => {
-        if (result.rows.length < 1 || result.rows == undefined) {
-          const query = queryMessage.delete(request).query;
-          db.query(query, (err) => {
-            if (!err) {
-              resolve(responseMessage("Success delete message", 200));
-            } else {
-              reject(responseMessage("Delete message failed", 500));
-            }
-          });
-        }
         if (!err) {
-          const subReq = { ...result.rows[0] };
-          if (subReq.images !== null || subReq.images !== undefined) {
-            fs.unlinkSync(`public/${subReq.images}`);
+          if (result.rows[0].images !== null) {
+            fs.unlinkSync(`public/${result.rows[0].images}`);
           }
-          if (subReq.document !== null || subReq.document !== undefined) {
-            fs.unlinkSync(`public/${subReq.document}`);
+          if (result.rows[0].document !== null) {
+            fs.unlinkSync(`public/${result.rows[0].document}`);
           }
-          if (subReq.file !== null || subReq.file !== undefined) {
-            fs.unlinkSync(`public/${subReq.file}`);
+          if (result.rows[0].file !== null) {
+            fs.unlinkSync(`public/${result.rows[0].file}`);
           }
 
-          const query = queryMessage.delete(request).query;
-          db.query(query, (err) => {
+          const deleteQuery = queryMessage.delete(request.id).query;
+          db.query(deleteQuery, (err) => {
             if (!err) {
-              resolve(responseMessage("Success delete message", 200));
+              db.query(
+                `SELECT id from messages where chatroom_id = ${request.chatroom} order by timestamp DESC LIMIT 1`,
+                (err, result) => {
+                  if (!err) {
+                    db.query(
+                      `UPDATE chatrooms SET lastmessage = ${result.rows[0].id} where id = ${request.chatroom}`,
+                      (err) => {
+                        if (!err) {
+                          resolve(
+                            responseMessage("Delete message success", 200)
+                          );
+                        }
+                      }
+                    );
+                  }
+                }
+              );
             } else {
-              reject(responseMessage("Delete message failed", 500));
+              reject(responseMessage("Error when delete message", 500));
             }
           });
         } else {
-          reject(responseMessage("Delete message failed", 500));
+          reject(responseMessage("Error when delete message", 500));
         }
       });
     });

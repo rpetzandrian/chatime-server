@@ -74,14 +74,14 @@ const ChatroomModel = {
 
   searchChatrooms: (request) => {
     return new Promise((resolve, reject) => {
-      const query = queryChatroom.search(request);
+      const query = queryChatroom.search(request).query;
       db.query(query, (err, result) => {
         if (!err) {
           if (result.rowCount < 1) {
             reject(responseMessage("Chatroom not found", 400));
           }
 
-          resolve(responseMessage("Success get chatroom", 200, response.rows));
+          resolve(responseMessage("Success get chatroom", 200, result.rows));
         } else {
           reject(responseMessage("Get chatrooms failed", 500));
         }

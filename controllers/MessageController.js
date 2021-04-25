@@ -61,9 +61,12 @@ const MessageController = {
   },
 
   deleteMessage: async (req, res) => {
-    const id = req.params.message_id;
+    const request = {
+      id: req.params.message_id,
+      chatroom: req.query.chatroom,
+    };
     try {
-      const result = await messageModel.deleteMessage(id);
+      const result = await messageModel.deleteMessage(request);
       res.status(result.statusCode).send(result);
     } catch (err) {
       res.status(err.statusCode).send(err);

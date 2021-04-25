@@ -7,7 +7,7 @@ const queryUser = {
   },
 
   getById: (request) => {
-    return `SELECT * FROM users INNER JOIN user_status ON user_status.user_id = users.id WHERE id = ${request}`;
+    return `SELECT photo, name, username, phone, bio FROM users INNER JOIN user_status ON user_status.user_id = users.id WHERE id = ${request}`;
   },
 
   addNew: (request) => {

@@ -95,7 +95,7 @@ const queryChatroom = {
 	  inner join users as e on e.id = user1
 	  inner join (select a.id, a.phone, a.photo, b.is_online from users as a inner join user_status as b on b.user_id = a.id) as f on f.id = user2
 	  left join messages as g on g.id = a.lastmessage
-    where is_saved = false and friend_name like '${request.search}' or g.text like '${request.search}'
+    where is_saved = false and friend_name like '%${request.search}%' or g.text like '%${request.search}%'
     group by a.id, user1, user2, is_pinned, is_saved, contact_id, c.friend_name, user1_photo, user2_photo, user2_phone, f.is_online, g.text, lastsender, lastread, g.timestamp
     order by is_pinned desc`;
 

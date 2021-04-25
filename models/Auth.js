@@ -72,6 +72,7 @@ const UserAuth = {
                     jwt.sign(
                       payload,
                       process.env.SECRET_KEY,
+                      // { expiresIn: "30000" },
                       function (errToken, token) {
                         if (!errToken) {
                           db.query(
@@ -80,8 +81,9 @@ const UserAuth = {
                               if (!err) {
                                 resolve(
                                   responseMessage("Login success", 200, {
-                                    token: "Bearer " + token,
+                                    token: token,
                                     id: id,
+                                    // expired: 30000,
                                   })
                                 );
                               }
