@@ -9,7 +9,11 @@ const socketio = require("socket.io");
 const server = require("http").createServer(app);
 const io = socketio(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "http://chatime-app.mooo.com",
+      "https://chatime-app.mooo.com",
+    ],
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
@@ -82,5 +86,5 @@ app.get("*", (req, res) => {
 
 // server.listen(port)
 server.listen(port, () => {
-  console.log(`Server started on http://${process.env.HOST}:${port}`);
+  console.log(`Server started on https://${process.env.HOST}:${port}`);
 });
