@@ -21,6 +21,25 @@ const ChatroomModel = {
     });
   },
 
+  getChatroomById: (request) => {
+    return new Promise((resolve, reject) => {
+      const query = queryChatroom.getById(request);
+      db.query(query, (err, response) => {
+        if (!err) {
+          if (response.rows.length < 1) {
+            reject(responseMessage("Chatroom not found", 400));
+          }
+          resolve(
+            responseMessage("Success get chatroom", 200, response.rows[0])
+          );
+        } else {
+          console.log(err);
+          reject(responseMessage("Get chatroom failed", 500));
+        }
+      });
+    });
+  },
+
   getAllChatroomsImportant: (request) => {
     return new Promise((resolve, reject) => {
       const query = queryChatroom.getAllImportant(request).query1;
@@ -99,8 +118,10 @@ const ChatroomModel = {
             const query = queryChatroom.addNew(request).addChatroom;
             db.query(query, (err, result) => {
               if (!err) {
-                const query = queryChatroom.addNew(request, result.rows[0].id)
-                  .addMember;
+                const query = queryChatroom.addNew(
+                  request,
+                  result.rows[0].id
+                ).addMember;
                 db.query(query, (err) => {
                   if (!err) {
                     resolve(

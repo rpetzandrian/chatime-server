@@ -3,12 +3,23 @@ const emptyInputMessage = require("../helpers/emptyInputMessage");
 
 const ChatroomController = {
   getAllChatrooms: async (req, res) => {
-    const id = req.params.id;
-    try {
-      const result = await chatroomModel.getAllChatrooms(id);
-      res.status(result.statusCode).send(result);
-    } catch (err) {
-      res.status(err.statusCode).send(err);
+    if (req.query.chatroom_id) {
+      const id = req.params.id;
+      const chatroom_id = req.query.chatroom_id;
+      try {
+        const result = await chatroomModel.getChatroomById({ id, chatroom_id });
+        res.status(result.statusCode).send(result);
+      } catch (err) {
+        res.status(err.statusCode).send(err);
+      }
+    } else {
+      const id = req.params.id;
+      try {
+        const result = await chatroomModel.getAllChatrooms(id);
+        res.status(result.statusCode).send(result);
+      } catch (err) {
+        res.status(err.statusCode).send(err);
+      }
     }
   },
 

@@ -75,19 +75,12 @@ const UserAuth = {
                       // { expiresIn: "30000" },
                       function (errToken, token) {
                         if (!errToken) {
-                          db.query(
-                            `UPDATE user_status SET is_online = true WHERE user_id = (select id from users where email = '${email}')`,
-                            (err) => {
-                              if (!err) {
-                                resolve(
-                                  responseMessage("Login success", 200, {
-                                    token: token,
-                                    id: id,
-                                    // expired: 30000,
-                                  })
-                                );
-                              }
-                            }
+                          resolve(
+                            responseMessage("Login success", 200, {
+                              token: token,
+                              id: id,
+                              // expired: 30000,
+                            })
                           );
                         } else {
                           reject(

@@ -6,36 +6,13 @@ const fs = require("fs");
 const MessageModel = {
   getAllMessages: (request) => {
     return new Promise((resolve, reject) => {
-      const getChatroom = queryMessage.getAll(request).getchatroom;
-      db.query(getChatroom, (err, result) => {
+      const getMessages = queryMessage.getAll(request);
+      db.query(getMessages, (err, response) => {
         if (!err) {
-          if (result.rowCount < 1) {
-            reject(responseMessage("Chat not found", 400));
-          }
-
-          const getMessages = queryMessage.getAll(request).getMessages;
-          db.query(getMessages, (err, response) => {
-            if (!err) {
-              const data = {
-                chatroom_id: result.rows[0].chatroom_id,
-                user1: result.rows[0].user1,
-                user1_photo: result.rows[0].user1_photo,
-                user2: result.rows[0].user2,
-                user2_photo: result.rows[0].user2_photo,
-                user2_name: result.rows[0].friend_name,
-                user2_phone: result.rows[0].phone,
-                is_online: result.rows[0].is_online,
-                contact_id: result.rows[0].contact_id,
-                messages: response.rows || null,
-              };
-
-              resolve(responseMessage("Success get Message", 200, data));
-            } else {
-              reject(responseMessage("Error when get messages", 500));
-            }
-          });
+          resolve(responseMessage("Success get Message", 200, response.rows));
         } else {
-          reject(responseMessage("Error when get chat", 500));
+          console.log(err);
+          reject(responseMessage("Error when get messages", 500));
         }
       });
     });
@@ -63,10 +40,12 @@ const MessageModel = {
             const query = queryMessage.addNew(request).query;
             const values = queryMessage.addNew(request).values;
             db.query(query, values, (err, result) => {
+              console.log(err, "1");
               if (!err) {
                 db.query(
                   `INSERT INTO message_img(message_id, images) VALUES(${result.rows[0].id}, 'uploads/images/${images[i].filename}')`,
                   (err) => {
+                    console.log(err, "2");
                     if (!err) {
                       db.query(
                         `UPDATE chatrooms SET lastmessage = ${result.rows[0].id} WHERE id = ${request.chatroom_id}`,
