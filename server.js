@@ -18,6 +18,7 @@ const io = socketio(server, {
     allowedHeaders: ["my-custom-header"],
     credentials: true,
   },
+  transports: ["websocket"],
 });
 
 app.use(express.static("public"));
