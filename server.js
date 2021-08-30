@@ -14,6 +14,8 @@ const io = socketio(server, {
       "http://localhost:5001",
       "http://chatime-app.mooo.com",
       "https://chatime-app.mooo.com",
+      "https://chatime.rpetz.my.id",
+      "http://chatime.rpetz.my.id",
     ],
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["my-custom-header"],
